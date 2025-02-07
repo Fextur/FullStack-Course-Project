@@ -30,6 +30,9 @@ export const useUser = () => {
         setUser(user);
       }
     },
+    onError: (error) => {
+      return error.message;
+    },
   });
 
   const logout = () => {
@@ -37,5 +40,11 @@ export const useUser = () => {
     setUser(null);
   };
 
-  return { user, login: loginMutation.mutate, logout };
+  return {
+    user,
+    login: loginMutation.mutate,
+    logout,
+    isLoggingIn: loginMutation.isPending,
+    loginError: loginMutation.error ? loginMutation.error.message : null,
+  };
 };
