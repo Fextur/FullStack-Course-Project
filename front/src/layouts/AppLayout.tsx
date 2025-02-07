@@ -68,7 +68,6 @@ const AppLayout = () => {
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    // navigate({ to: "/profile" });
                     logout();
                     closeMenu();
                   }}

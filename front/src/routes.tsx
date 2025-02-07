@@ -12,6 +12,7 @@ import Login from "@/pages/Login";
 import { useUser } from "@/hooks/useUser";
 import { useEffect } from "react";
 import Profile from "@/pages/Profile";
+import Register from "@/pages/Register";
 
 const ProtectedLayout = () => {
   const { user } = useUser();
@@ -19,7 +20,11 @@ const ProtectedLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user && routerState.location.pathname !== "/login") {
+    if (
+      !user &&
+      routerState.location.pathname !== "/login" &&
+      routerState.location.pathname !== "/register"
+    ) {
       navigate({ to: "/login", replace: true });
     }
   }, [user, routerState.location.pathname, navigate]);
@@ -43,6 +48,12 @@ const loginRoute = createRoute({
   component: Login,
 });
 
+const registerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/register",
+  component: Register,
+});
+
 const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/profile",
@@ -57,6 +68,7 @@ const notFoundRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   homeRoute,
   loginRoute,
+  registerRoute,
   profileRoute,
   notFoundRoute,
 ]);

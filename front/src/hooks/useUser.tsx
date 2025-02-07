@@ -13,7 +13,7 @@ export const useUser = () => {
     //TODO: implement login logic
     return new Promise<User | null>((resolve, reject) => {
       if (username === "test" && password === "123") {
-        resolve({ username: "test", id: "1" });
+        resolve({ username: "test", id: "1", email: "test@test.com" });
       } else {
         reject(new Error("Invalid credentials"));
       }

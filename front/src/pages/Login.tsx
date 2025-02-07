@@ -89,6 +89,14 @@ const Login = () => {
         >
           {isLoggingIn ? "Logging in..." : "Login"}
         </Button>
+        <Button
+          fullWidth
+          variant="text"
+          sx={{ mt: 1 }}
+          onClick={() => navigate({ to: "/register" })}
+        >
+          Don't have an account? Register
+        </Button>
       </form>
     </Paper>
   );
