@@ -3,7 +3,7 @@ import { userAtom } from "@/atoms";
 import { User } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 
-const DEFAULT_USER_IMAGE =
+export const DEFAULT_USER_IMAGE =
   "https://static.vecteezy.com/system/resources/thumbnails/001/840/618/small/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg";
 
 export const useUser = () => {
