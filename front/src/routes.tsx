@@ -11,6 +11,7 @@ import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import { useUser } from "@/hooks/useUser";
 import { useEffect } from "react";
+import Profile from "@/pages/Profile";
 
 const ProtectedLayout = () => {
   const { user } = useUser();
@@ -42,13 +43,23 @@ const loginRoute = createRoute({
   component: Login,
 });
 
+const profileRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/profile",
+  component: Profile,
+});
 const notFoundRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "*",
   component: () => <Navigate to="/" />,
 });
 
-const routeTree = rootRoute.addChildren([homeRoute, loginRoute, notFoundRoute]);
+const routeTree = rootRoute.addChildren([
+  homeRoute,
+  loginRoute,
+  profileRoute,
+  notFoundRoute,
+]);
 
 export const router = createRouter({
   routeTree,

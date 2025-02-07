@@ -1,8 +1,15 @@
-import { Link, Outlet } from "@tanstack/react-router";
-import { AppBar, Toolbar, Button } from "@mui/material";
+import { Link, Outlet, useNavigate } from "@tanstack/react-router";
+import { AppBar, Toolbar, Button, Avatar, Menu, MenuItem } from "@mui/material";
 import { Home, LogIn } from "lucide-react";
+import { useUser } from "@/hooks/useUser";
+import { useState } from "react";
 
 const AppLayout = () => {
+  const { user, logout } = useUser();
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const closeMenu = () => setAnchorEl(null);
   return (
     <div
       style={{
@@ -38,14 +45,48 @@ const AppLayout = () => {
           >
             Home
           </Button>
-          <Button
-            component={Link}
-            to="/login"
-            sx={{ color: "white" }}
-            startIcon={<LogIn size={20} />}
-          >
-            Login
-          </Button>
+          {user ? (
+            <>
+              <Avatar
+                src={user.image}
+                alt={user.username}
+                sx={{ width: 40, height: 40, marginRight: 2 }}
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+              />
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={closeMenu}
+              >
+                <MenuItem
+                  onClick={() => {
+                    navigate({ to: "/profile" });
+                    closeMenu();
+                  }}
+                >
+                  Profile
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    // navigate({ to: "/profile" });
+                    logout();
+                    closeMenu();
+                  }}
+                >
+                  Logout
+                </MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <Button
+              component={Link}
+              to="/login"
+              sx={{ color: "white" }}
+              startIcon={<LogIn size={20} />}
+            >
+              Login
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
 
