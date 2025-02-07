@@ -53,12 +53,11 @@ const Login = () => {
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
               error={!!field.state.meta.errors?.length || !!loginError}
-              helperText={field.state.meta.errors?.[0] || loginError || ""}
+              helperText={field.state.meta.errors?.[0] || ""}
               sx={{ mb: 2 }}
             />
           )}
         </form.Field>
-
         <form.Field
           name="password"
           validators={{
@@ -74,12 +73,12 @@ const Login = () => {
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
               error={!!field.state.meta.errors?.length || !!loginError}
-              helperText={field.state.meta.errors?.[0] || loginError || ""}
+              helperText={field.state.meta.errors?.[0] || ""}
               sx={{ mb: 2 }}
             />
           )}
-        </form.Field>
-
+        </form.Field>{" "}
+        {loginError && <Typography color="error">{loginError}</Typography>}
         <Button
           type="submit"
           variant="contained"

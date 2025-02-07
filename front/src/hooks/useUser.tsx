@@ -33,9 +33,6 @@ export const useUser = () => {
         setUser({ ...user, image: user.image || DEFAULT_USER_IMAGE });
       }
     },
-    onError: (error) => {
-      return error.message;
-    },
   });
 
   const logout = () => {

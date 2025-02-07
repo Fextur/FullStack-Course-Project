@@ -1,14 +1,20 @@
 import { useMutation } from "@tanstack/react-query";
 import { User } from "@/types";
 import { DEFAULT_USER_IMAGE } from "@/hooks/useUser";
+import { useSetRecoilState } from "recoil";
+import { userAtom } from "@/atoms";
 
 export const useRegister = () => {
+  const setUser = useSetRecoilState(userAtom);
+
   const registerUser = async (
     email: string,
     username: string,
     password: string,
     image?: File
   ): Promise<User | null> => {
+    //TODO: implement register logic
+    console.log(password);
     return new Promise<User | null>((resolve, reject) => {
       if (username !== "test") {
         resolve({
@@ -34,6 +40,11 @@ export const useRegister = () => {
       password: string;
       image?: File;
     }) => registerUser(email, username, password, image),
+    onSuccess: (user) => {
+      if (user) {
+        setUser({ ...user });
+      }
+    },
   });
 
   return {
