@@ -11,7 +11,7 @@ export const useRegister = () => {
     email: string,
     username: string,
     password: string,
-    image?: File
+    image?: string
   ): Promise<User | null> => {
     //TODO: implement register logic
     console.log(password);
@@ -25,7 +25,7 @@ export const useRegister = () => {
           id: "1",
           email,
           username,
-          image: image ? URL.createObjectURL(image) : DEFAULT_USER_IMAGE,
+          image: image ?? DEFAULT_USER_IMAGE,
         });
       }
     });
@@ -40,7 +40,7 @@ export const useRegister = () => {
       email: string;
       username: string;
       password: string;
-      image?: File;
+      image?: string;
     }) => registerUser(email, username, password, image),
     onSuccess: (user) => {
       if (user) {
