@@ -16,15 +16,17 @@ export const useRegister = () => {
     //TODO: implement register logic
     console.log(password);
     return new Promise<User | null>((resolve, reject) => {
-      if (username !== "test") {
+      if (username === "test") {
+        reject(new Error("Username is already taken"));
+      } else if (email === "test@test.com") {
+        reject(new Error("Email is already in use"));
+      } else {
         resolve({
           id: "1",
           email,
           username,
           image: image ? URL.createObjectURL(image) : DEFAULT_USER_IMAGE,
         });
-      } else {
-        reject(new Error("Username already exists"));
       }
     });
   };

@@ -2,10 +2,14 @@ import { useRegister } from "@/hooks/useRegister";
 import { useNavigate } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
 import { TextField, Button, Typography, Paper } from "@mui/material";
+import { UserPlus } from "lucide-react";
+import { useState } from "react";
 
 const Register = () => {
   const { register, isRegistering, registerError } = useRegister();
   const navigate = useNavigate();
+  const [usernameError, setUsernameError] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const form = useForm({
     defaultValues: {
@@ -17,6 +21,13 @@ const Register = () => {
     onSubmit: async ({ value }) => {
       register(value, {
         onSuccess: () => navigate({ to: "/" }),
+        onError: (error) => {
+          if (error.message.includes("Username is already taken")) {
+            setUsernameError("Username is already taken");
+          } else if (error.message.includes("Email is already in use")) {
+            setEmailError("Email is already in use");
+          }
+        },
       });
     },
   });
@@ -26,7 +37,13 @@ const Register = () => {
       elevation={3}
       sx={{ padding: 4, maxWidth: 400, margin: "auto", mt: 8 }}
     >
-      <Typography variant="h5">Register</Typography>
+      <Typography
+        variant="h5"
+        sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}
+      >
+        <UserPlus size={24} />
+        Register
+      </Typography>
 
       <form
         onSubmit={(e) => {
@@ -34,16 +51,17 @@ const Register = () => {
           form.handleSubmit();
         }}
       >
-        {/* Email Field */}
         <form.Field
           name="email"
           validators={{
-            onChange: ({ value }) =>
-              !value
+            onChange: ({ value }) => {
+              setEmailError("");
+              return !value
                 ? "Email is required"
                 : !/^\S+@\S+\.\S+$/.test(value)
                 ? "Invalid email format"
-                : undefined,
+                : undefined;
+            },
           }}
         >
           {(field) => (
@@ -51,19 +69,20 @@ const Register = () => {
               fullWidth
               label="Email"
               onChange={(e) => field.handleChange(e.target.value)}
-              error={!!field.state.meta.errors?.length}
-              helperText={field.state.meta.errors?.[0] || ""}
+              error={!!field.state.meta.errors?.length || !!emailError}
+              helperText={field.state.meta.errors?.[0] || emailError || ""}
               sx={{ mt: 2 }}
             />
           )}
         </form.Field>
 
-        {/* Username Field */}
         <form.Field
           name="username"
           validators={{
-            onChange: ({ value }) =>
-              !value ? "Username is required" : undefined,
+            onChange: ({ value }) => {
+              setUsernameError("");
+              return !value ? "Username is required" : undefined;
+            },
           }}
         >
           {(field) => (
@@ -71,14 +90,13 @@ const Register = () => {
               fullWidth
               label="Username"
               onChange={(e) => field.handleChange(e.target.value)}
-              error={!!field.state.meta.errors?.length}
-              helperText={field.state.meta.errors?.[0] || ""}
+              error={!!field.state.meta.errors?.length || !!usernameError}
+              helperText={field.state.meta.errors?.[0] || usernameError || ""}
               sx={{ mt: 2 }}
             />
           )}
         </form.Field>
 
-        {/* Password Field */}
         <form.Field
           name="password"
           validators={{
