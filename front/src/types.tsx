@@ -15,4 +15,5 @@ export type Post = {
   content: string;
   likes: number;
   comments: Comment[];
+  user: User
 }
