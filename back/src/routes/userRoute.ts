@@ -12,8 +12,8 @@ import { authMiddleware } from "../middlewares/authMiddleware";
 const router = Router();
 
 router.post("/", createUser);
-router.get("/:username", authMiddleware, getUser);
-router.put("/:email", authMiddleware, updateUser);
+router.get("/:id", authMiddleware, getUser);
+router.put("/:id", authMiddleware, updateUser);
 router.post("/login", loginUser);
 router.post("/logout", authMiddleware, logoutUser);
 router.post("/refreshToken", refreshToken);

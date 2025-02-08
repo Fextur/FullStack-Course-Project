@@ -20,7 +20,7 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const getUser = async (req: Request, res: Response) => {
   try {
-    const user = await userDao.getUserByUsername(req.params.username);
+    const user = await userDao.getUserById(req.params.id);
     if (user) {
       res.status(200).json(user);
     } else {
@@ -37,10 +37,7 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const updatedUser = await userDao.updateUserByEmail(
-      req.params.email,
-      req.body
-    );
+    const updatedUser = await userDao.updateUserById(req.params.id, req.body);
     if (updatedUser) {
       res.status(200).json(updatedUser);
     } else {
