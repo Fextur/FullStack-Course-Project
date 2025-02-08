@@ -48,7 +48,7 @@ return ( <Box
           }}
         >
           <CardHeader
-            // avatar={<Avatar src={post.user.image} />}
+            avatar={<Avatar src={post.user.image} />}
             title={post.user.username}
           />
           <CardMedia
