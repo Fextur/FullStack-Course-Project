@@ -6,6 +6,7 @@ import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import { DEFAULT_USER_IMAGE } from "@/hooks/useUser";
 import AvatarUpload from "@/components/AvatarUpload";
+import { User } from "@/types";
 
 const Register = () => {
   const { register, isRegistering, registerError } = useRegister();
@@ -13,7 +14,7 @@ const Register = () => {
   const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("");
 
-  const [image, setImage] = useState<string>(DEFAULT_USER_IMAGE);
+  const [image, setImage] = useState<User["image"]>(DEFAULT_USER_IMAGE);
 
   const form = useForm({
     defaultValues: {

@@ -3,26 +3,27 @@ import { User } from "@/types";
 import { DEFAULT_USER_IMAGE } from "@/hooks/useUser";
 import { useSetRecoilState } from "recoil";
 import { userAtom } from "@/atoms";
+import { allUsers } from "@/data/users";
 
 export const useRegister = () => {
   const setUser = useSetRecoilState(userAtom);
 
   const registerUser = async (
-    email: string,
-    username: string,
+    email: User["email"],
+    username: User["username"],
     password: string,
-    image?: string
+    image?: User["image"]
   ): Promise<User | null> => {
     //TODO: implement register logic
     console.log(password);
     return new Promise<User | null>((resolve, reject) => {
-      if (username === "test") {
+      if (allUsers.some((user) => user.username === username)) {
         reject(new Error("Username is already taken"));
-      } else if (email === "test@test.com") {
+      } else if (allUsers.some((user) => user.email === email)) {
         reject(new Error("Email is already in use"));
       } else {
         resolve({
-          id: "1",
+          id: allUsers.length.toString(),
           email,
           username,
           image: image ?? DEFAULT_USER_IMAGE,
@@ -37,10 +38,10 @@ export const useRegister = () => {
       password,
       image,
     }: {
-      email: string;
-      username: string;
+      email: User["email"];
+      username: User["username"];
       password: string;
-      image?: string;
+      image?: User["image"];
     }) => registerUser(email, username, password, image),
     onSuccess: (user) => {
       if (user) {

@@ -4,16 +4,19 @@ import { useEffect, useState } from "react";
 import { Button, TextField, Typography } from "@mui/material";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useProfile } from "@/hooks/useProfile";
+import { User } from "@/types";
+import { usePosts } from "@/hooks/usePosts";
 
 const Profile = () => {
   const { user } = useUser();
   const { id } = useParams({ strict: false });
   const { profile, updateProfile, updateError, refetchProfile } =
     useProfile(id);
+  const { posts, isLoading } = usePosts(profile?.id);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [newImage, setNewImage] = useState<string | null>(null);
-  const [newUsername, setNewUsername] = useState<string | null>(null);
+  const [newImage, setNewImage] = useState<User["image"] | null>(null);
+  const [newUsername, setNewUsername] = useState<User["username"] | null>(null);
 
   const navigate = useNavigate();
 
@@ -122,6 +125,9 @@ const Profile = () => {
           Go to Chat
         </Button>
       )}
+
+      {isLoading && <Typography variant="h5">Loading...</Typography>}
+      {posts && posts.map((post) => <div key={post.id}>{post.content}</div>)}
     </div>
   );
 };

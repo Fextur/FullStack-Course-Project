@@ -4,3 +4,20 @@ export type User = {
   username: string;
   image?: string;
 };
+
+export type Comment = {
+  id: number;
+  content: string;
+  user: User;
+};
+
+export type Post = {
+  id: number;
+  image: string;
+  content: string;
+  likes: number;
+  comments?: Comment[];
+  user: User;
+  isUserLiked?: boolean;
+  commentsCount?: number;
+};

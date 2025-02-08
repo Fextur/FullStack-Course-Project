@@ -1,9 +1,10 @@
+import { User } from "@/types";
 import { Avatar } from "@mui/material";
 import { Camera } from "lucide-react";
 
 interface IAvatarUploadProps {
-  image: string;
-  setImage?: (image: string) => void;
+  image: User["image"];
+  setImage?: (image: User["image"]) => void;
   size?: number;
   displayOnly?: boolean;
 }

@@ -1,36 +1,16 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { User } from "@/types";
-import { DEFAULT_USER_IMAGE } from "@/hooks/useUser";
 import { useRecoilState } from "recoil";
 import { userAtom } from "@/atoms";
+import { allUsers } from "@/data/users";
 
-export const useProfile = (id: string) => {
+export const useProfile = (id: User["id"]) => {
   const [user, setUser] = useRecoilState(userAtom);
 
-  const fetchUserProfile = async (id: string): Promise<User | null> => {
+  const fetchUserProfile = async (id: User["id"]): Promise<User | null> => {
     if (id === user?.id) return user;
     // TODO: Fetch user profile from the server
-    const users = [
-      {
-        id: "2",
-        username: "ido",
-        email: "idodo@id.o",
-        image: DEFAULT_USER_IMAGE,
-      },
-      {
-        id: "3",
-        username: "chris",
-        email: "chris@mdr.gov",
-        image: DEFAULT_USER_IMAGE,
-      },
-      {
-        id: "4",
-        username: "avicii",
-        email: "avicii@fex.gang",
-        image: DEFAULT_USER_IMAGE,
-      },
-    ];
-    return users.find((user) => user.id === id) || null;
+    return allUsers.find((user) => user.id === id) || null;
   };
 
   const {
@@ -43,9 +23,9 @@ export const useProfile = (id: string) => {
   });
 
   const updateUserProfile = async (
-    id: string,
-    username: string | null,
-    image: string | null
+    id: User["id"],
+    username: User["username"] | null,
+    image: User["image"] | null
   ): Promise<User | null> => {
     return new Promise<User | null>((resolve, reject) => {
       if (!user || user.id !== id) {
@@ -73,9 +53,9 @@ export const useProfile = (id: string) => {
       username,
       image,
     }: {
-      id: string;
-      username: string | null;
-      image: string | null;
+      id: User["id"];
+      username: User["username"] | null;
+      image: User["image"] | null;
     }) => updateUserProfile(id, username, image),
     onSuccess: (user) => {
       if (user) {

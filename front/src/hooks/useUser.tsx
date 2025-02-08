@@ -2,6 +2,7 @@ import { useRecoilState } from "recoil";
 import { userAtom } from "@/atoms";
 import { User } from "@/types";
 import { useMutation } from "@tanstack/react-query";
+import { allUsers, testUser } from "@/data/users";
 
 export const DEFAULT_USER_IMAGE =
   "https://static.vecteezy.com/system/resources/thumbnails/001/840/618/small/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg";
@@ -9,11 +10,12 @@ export const DEFAULT_USER_IMAGE =
 export const useUser = () => {
   const [user, setUser] = useRecoilState(userAtom);
 
-  const login = async (username: string, password: string) => {
+  const login = async (username: User["username"], password: string) => {
     //TODO: implement login logic
     return new Promise<User | null>((resolve, reject) => {
-      if (username === "test" && password === "123") {
-        resolve({ username: "test", id: "1", email: "test@test.com" });
+      const user = allUsers.find((user) => user.username === username);
+      if (user && password === "123") {
+        resolve(user);
       } else {
         reject(new Error("Invalid credentials"));
       }
@@ -25,7 +27,7 @@ export const useUser = () => {
       username,
       password,
     }: {
-      username: string;
+      username: User["username"];
       password: string;
     }) => login(username, password),
     onSuccess: (user) => {
