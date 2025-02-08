@@ -8,10 +8,13 @@ import { useProfile } from "@/hooks/useProfile";
 const Profile = () => {
   const { user } = useUser();
   const { id } = useParams({ strict: false });
-  const { profile } = useProfile(id);
+  const { profile, updateProfile, updateError, refetchProfile } =
+    useProfile(id);
 
   const [isEditing, setIsEditing] = useState(false);
   const [newImage, setNewImage] = useState<string | null>(null);
+  const [newUsername, setNewUsername] = useState<string | null>(null);
+
   const navigate = useNavigate();
 
   const isSelf = profile?.id === user?.id;
@@ -37,7 +40,7 @@ const Profile = () => {
     >
       <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
         <AvatarUpload
-          image={profile.image ?? DEFAULT_USER_IMAGE}
+          image={newImage ?? profile.image ?? DEFAULT_USER_IMAGE}
           setImage={isEditing ? setNewImage : undefined}
           size={120}
           displayOnly={!isEditing}
@@ -48,7 +51,8 @@ const Profile = () => {
         <TextField
           fullWidth
           label="Username"
-          value={user.username}
+          value={newUsername ?? user.username}
+          onChange={(e) => setNewUsername(e.target.value)}
           autoFocus
           sx={{
             marginTop: 2,
@@ -68,12 +72,28 @@ const Profile = () => {
 
       <Typography variant="subtitle1">{profile.email}</Typography>
 
-      {isSelf &&
-        (isEditing ? (
+      {updateError && <Typography color="error">{updateError}</Typography>}
+
+      {isSelf ? (
+        isEditing ? (
           <Button
             variant="contained"
             color="primary"
-            onClick={() => setIsEditing(false)}
+            onClick={() => {
+              updateProfile(
+                {
+                  id: user.id,
+                  username: newUsername,
+                  image: newImage,
+                },
+                {
+                  onSuccess: () => {
+                    refetchProfile();
+                    setIsEditing(false);
+                  },
+                }
+              );
+            }}
             style={{ marginTop: 16 }}
           >
             Save Changes
@@ -87,7 +107,21 @@ const Profile = () => {
           >
             Edit Profile
           </Button>
-        ))}
+        )
+      ) : (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            navigate({
+              to: `/chat/${profile.id}`,
+            });
+          }}
+          style={{ marginTop: 16 }}
+        >
+          Go to Chat
+        </Button>
+      )}
     </div>
   );
 };

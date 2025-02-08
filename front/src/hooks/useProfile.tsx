@@ -33,15 +33,19 @@ export const useProfile = (id: string) => {
     return users.find((user) => user.id === id) || null;
   };
 
-  const { data: profile, isLoading } = useQuery({
+  const {
+    data: profile,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["profile", id],
     queryFn: () => fetchUserProfile(id),
   });
 
   const updateUserProfile = async (
     id: string,
-    username?: string,
-    image?: string
+    username: string | null,
+    image: string | null
   ): Promise<User | null> => {
     return new Promise<User | null>((resolve, reject) => {
       if (!user || user.id !== id) {
@@ -52,8 +56,13 @@ export const useProfile = (id: string) => {
           username: username || user.username,
           image: image || user.image,
         };
-        // TODO: Update user profile on the server, also handle errors
-        resolve(updatedUser);
+        // TODO: Update user profile on the server
+
+        if (username === "test") {
+          reject(new Error("Username is already taken"));
+        } else {
+          resolve(updatedUser);
+        }
       }
     });
   };
@@ -65,8 +74,8 @@ export const useProfile = (id: string) => {
       image,
     }: {
       id: string;
-      username?: string;
-      image?: string;
+      username: string | null;
+      image: string | null;
     }) => updateUserProfile(id, username, image),
     onSuccess: (user) => {
       if (user) {
@@ -80,5 +89,9 @@ export const useProfile = (id: string) => {
     isLoading,
     updateProfile: updateProfileMutation.mutate,
     isUpdating: updateProfileMutation.isPending,
+    updateError: updateProfileMutation.error
+      ? updateProfileMutation.error.message
+      : null,
+    refetchProfile: refetch,
   };
 };
