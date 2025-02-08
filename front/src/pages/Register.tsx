@@ -1,10 +1,11 @@
 import { useRegister } from "@/hooks/useRegister";
 import { useNavigate } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
-import { TextField, Button, Typography, Paper, Avatar } from "@mui/material";
-import { Camera, UserPlus } from "lucide-react";
+import { TextField, Button, Typography, Paper } from "@mui/material";
+import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import { DEFAULT_USER_IMAGE } from "@/hooks/useUser";
+import AvatarUpload from "@/components/AvatarUpload";
 
 const Register = () => {
   const { register, isRegistering, registerError } = useRegister();
@@ -13,13 +14,6 @@ const Register = () => {
   const [emailError, setEmailError] = useState("");
 
   const [image, setImage] = useState<string>(DEFAULT_USER_IMAGE);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImage(URL.createObjectURL(file));
-    }
-  };
 
   const form = useForm({
     defaultValues: {
@@ -59,50 +53,8 @@ const Register = () => {
       </Typography>
 
       <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
-        <label
-          htmlFor="image-upload"
-          style={{ cursor: "pointer", position: "relative" }}
-        >
-          <Avatar
-            src={image}
-            style={{
-              width: 90,
-              height: 90,
-              cursor: "pointer",
-              border: "3px solid #ccc",
-              transition: "0.3s",
-            }}
-            onMouseOver={(e) =>
-              (e.currentTarget.style.filter = "brightness(0.7)")
-            }
-            onMouseOut={(e) => (e.currentTarget.style.filter = "brightness(1)")}
-          />
-          <div
-            style={{
-              position: "absolute",
-              bottom: 0,
-              right: 0,
-              background: "rgba(0, 0, 0, 0.7)",
-              borderRadius: "50%",
-              width: 30,
-              height: 30,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Camera width={18} height={18} color="white" />
-          </div>
-        </label>
+        <AvatarUpload image={image} setImage={setImage} />
       </div>
-
-      <input
-        type="file"
-        id="image-upload"
-        accept="image/*"
-        onChange={handleImageChange}
-        style={{ display: "none" }}
-      />
       <form
         onSubmit={(e) => {
           e.preventDefault();
