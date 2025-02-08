@@ -3,7 +3,7 @@ import { userAtom } from "@/atoms";
 import { User } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 
-const DEFAULT_USER_IMAGE =
+export const DEFAULT_USER_IMAGE =
   "https://static.vecteezy.com/system/resources/thumbnails/001/840/618/small/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg";
 
 export const useUser = () => {
@@ -13,7 +13,7 @@ export const useUser = () => {
     //TODO: implement login logic
     return new Promise<User | null>((resolve, reject) => {
       if (username === "test" && password === "123") {
-        resolve({ username: "test", id: "1" });
+        resolve({ username: "test", id: "1", email: "test@test.com" });
       } else {
         reject(new Error("Invalid credentials"));
       }
@@ -32,9 +32,6 @@ export const useUser = () => {
       if (user) {
         setUser({ ...user, image: user.image || DEFAULT_USER_IMAGE });
       }
-    },
-    onError: (error) => {
-      return error.message;
     },
   });
 
