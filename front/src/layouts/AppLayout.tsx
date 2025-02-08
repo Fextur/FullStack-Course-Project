@@ -52,6 +52,7 @@ const AppLayout = () => {
                 alt={user.username}
                 sx={{ width: 40, height: 40, marginRight: 2 }}
                 onClick={(e) => setAnchorEl(e.currentTarget)}
+                style={{ cursor: "pointer" }}
               />
               <Menu
                 anchorEl={anchorEl}
@@ -68,7 +69,6 @@ const AppLayout = () => {
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    // navigate({ to: "/profile" });
                     logout();
                     closeMenu();
                   }}
