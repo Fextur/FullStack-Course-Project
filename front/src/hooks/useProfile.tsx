@@ -10,7 +10,7 @@ export const useProfile = (id: User["id"]) => {
   const fetchUserProfile = async (id: User["id"]): Promise<User | null> => {
     if (id === user?.id) return user;
     // TODO: Fetch user profile from the server
-    // INPUT: optional id
+    // INPUT: id
     // OUTPUT: user
     // ERRORS: "User not found", "Unknow error"
     return allUsers.find((user) => user.id === id) || null;

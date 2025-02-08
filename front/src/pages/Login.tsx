@@ -77,7 +77,7 @@ const Login = () => {
               sx={{ mb: 2 }}
             />
           )}
-        </form.Field>{" "}
+        </form.Field>
         {loginError && <Typography color="error">{loginError}</Typography>}
         <Button
           type="submit"
