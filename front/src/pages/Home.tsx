@@ -38,8 +38,8 @@ const posts: Post[] = [
 
 const Home = () => {
   return (
-    <div style={{height:'85vh', width:'100vw'}}>
-      <PostsList posts={posts}/>
+    <div style={{ height: "85vh", width: "100vw" }}>
+      <PostsList posts={posts} />
     </div>
   );
 };

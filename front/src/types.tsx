@@ -4,11 +4,10 @@ export type User = {
   image?: string;
 };
 
-
 export type Comment = {
   id: number;
   content: string;
-}
+};
 
 export type Post = {
   id: number;
@@ -16,5 +15,5 @@ export type Post = {
   content: string;
   likes: number;
   comments: Comment[];
-  user: User
-}
+  user: User;
+};
