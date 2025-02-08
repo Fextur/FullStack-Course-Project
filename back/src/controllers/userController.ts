@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import userDao from '../dao/userDao';
 
-// Controller to create a user
 export const createUser = async (req: Request, res: Response) => {
   try {
     const newUser = await userDao.createUser(req.body);
@@ -15,7 +14,6 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
-// Controller to get a user by email
 export const getUser = async (req: Request, res: Response) => {
   try {
     const user = await userDao.getUserByEmail(req.params.email);
@@ -33,7 +31,6 @@ export const getUser = async (req: Request, res: Response) => {
   }
 };
 
-// Controller to update user
 export const updateUser = async (req: Request, res: Response) => {
   try {
     const updatedUser = await userDao.updateUserByEmail(req.params.email, req.body);
@@ -51,7 +48,6 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 };
 
-// Controller to delete a user
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const deletedUser = await userDao.deleteUserByEmail(req.params.email);
