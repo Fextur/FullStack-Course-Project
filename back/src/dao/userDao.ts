@@ -1,32 +1,32 @@
-import User, { IUser } from '../models/userModel';
-import { HydratedDocument } from 'mongoose';
+import User, { IUser } from "../models/userModel";
+import { HydratedDocument } from "mongoose";
+import bcrypt from "bcrypt";
 
-type updateDao = { 
-  username?: IUser['username'] 
-  image?: IUser['image'] 
-  password?: IUser['password']
-}
+type updateDao = {
+  username?: IUser["username"];
+  image?: IUser["image"];
+};
 
 class UserDao {
   async createUser(userData: IUser): Promise<HydratedDocument<IUser>> {
-    const newUser = new User(userData);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(userData.password, salt);
+
+    const newUser = new User({ ...userData, password: hashedPassword });
     return newUser.save();
   }
 
-  async getUserByEmail(email: IUser['email']): Promise<IUser | null> {
-    return User.findOne({ email });
+  async getUserByUsername(
+    username: IUser["username"]
+  ): Promise<Omit<IUser, "password"> | null> {
+    return User.findOne({ username }).select("-password");
   }
 
-  async getUserByUsername(username: IUser['username']): Promise<IUser | null> {
-    return User.findOne({ username });
-  }
-
-  async updateUserByEmail(email: IUser['email'], updatedData: updateDao): Promise<IUser | null> {
+  async updateUserByEmail(
+    email: IUser["email"],
+    updatedData: updateDao
+  ): Promise<IUser | null> {
     return User.findOneAndUpdate({ email }, updatedData, { new: true });
-  }
-
-  async deleteUserByEmail(email: IUser['email']): Promise<IUser | null> {
-    return User.findOneAndDelete({ email });
   }
 }
 
