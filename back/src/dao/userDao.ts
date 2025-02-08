@@ -1,25 +1,31 @@
 import User, { IUser } from '../models/userModel';
 import { HydratedDocument } from 'mongoose';
 
+type updateDao = { 
+  username?: IUser['username'] 
+  image?: IUser['image'] 
+  password?: IUser['password']
+}
+
 class UserDao {
-  async createUser(userData: { email: string; username: string; image?: string }): Promise<HydratedDocument<IUser>> {
+  async createUser(userData: IUser): Promise<HydratedDocument<IUser>> {
     const newUser = new User(userData);
     return newUser.save();
   }
 
-  async getUserByEmail(email: string): Promise<IUser | null> {
+  async getUserByEmail(email: IUser['email']): Promise<IUser | null> {
     return User.findOne({ email });
   }
 
-  async getUserByUsername(username: string): Promise<IUser | null> {
+  async getUserByUsername(username: IUser['username']): Promise<IUser | null> {
     return User.findOne({ username });
   }
 
-  async updateUserByEmail(email: string, updatedData: { username?: string; image?: string }): Promise<IUser | null> {
+  async updateUserByEmail(email: IUser['email'], updatedData: updateDao): Promise<IUser | null> {
     return User.findOneAndUpdate({ email }, updatedData, { new: true });
   }
 
-  async deleteUserByEmail(email: string): Promise<IUser | null> {
+  async deleteUserByEmail(email: IUser['email']): Promise<IUser | null> {
     return User.findOneAndDelete({ email });
   }
 }
