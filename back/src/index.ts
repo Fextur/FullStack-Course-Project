@@ -1,7 +1,8 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import { mongoURI, PORT } from './constants/congif';
+import userRoutes from './routes/userRoute';
 
 const app = express();
 
@@ -12,9 +13,7 @@ mongoose.connect(mongoURI)
   .then(() => console.log('Connected to MongoDB'))
   .catch((error) => console.error('Error connecting to MongoDB:', error));
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello, world! Express server running with MongoDB connection');
-});
+app.use('/api/users', userRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
