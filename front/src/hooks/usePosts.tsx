@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Post, User } from "@/types";
 import { posts as postsData } from "@/data/posts";
 
