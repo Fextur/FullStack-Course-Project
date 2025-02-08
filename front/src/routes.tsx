@@ -56,9 +56,16 @@ const registerRoute = createRoute({
 
 const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/profile",
+  path: "/profile/$id",
   component: Profile,
 });
+
+const defaultProfileRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/profile/",
+  component: Profile,
+});
+
 const notFoundRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "*",
@@ -71,6 +78,7 @@ const routeTree = rootRoute.addChildren([
   registerRoute,
   profileRoute,
   notFoundRoute,
+  defaultProfileRoute,
 ]);
 
 export const router = createRouter({

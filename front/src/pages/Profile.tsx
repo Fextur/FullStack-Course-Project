@@ -1,15 +1,31 @@
 import AvatarUpload from "@/components/AvatarUpload";
 import { DEFAULT_USER_IMAGE, useUser } from "@/hooks/useUser";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, TextField, Typography } from "@mui/material";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import { useProfile } from "@/hooks/useProfile";
 
 const Profile = () => {
   const { user } = useUser();
+  const { id } = useParams({ strict: false });
+  const { profile } = useProfile(id);
+
   const [isEditing, setIsEditing] = useState(false);
   const [newImage, setNewImage] = useState<string | null>(null);
-  const [image, setImage] = useState(user?.image || DEFAULT_USER_IMAGE);
+  const navigate = useNavigate();
 
-  if (!user) return <Typography variant="h5">User not found</Typography>;
+  const isSelf = profile?.id === user?.id;
+
+  useEffect(() => {
+    if (!id && user) {
+      navigate({
+        to: `/profile/${user.id}`,
+      });
+    }
+  }, [user, id, navigate]);
+
+  if (!user || !profile)
+    return <Typography variant="h5">User not found</Typography>;
 
   return (
     <div
@@ -21,7 +37,7 @@ const Profile = () => {
     >
       <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
         <AvatarUpload
-          image={image}
+          image={profile.image ?? DEFAULT_USER_IMAGE}
           setImage={isEditing ? setNewImage : undefined}
           size={120}
           displayOnly={!isEditing}
@@ -46,31 +62,32 @@ const Profile = () => {
         />
       ) : (
         <Typography variant="h4" style={{ marginTop: 16 }}>
-          {user.username}
+          {profile.username}
         </Typography>
       )}
 
-      <Typography variant="subtitle1">{user.email}</Typography>
+      <Typography variant="subtitle1">{profile.email}</Typography>
 
-      {isEditing ? (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setIsEditing(false)}
-          style={{ marginTop: 16 }}
-        >
-          Save Changes
-        </Button>
-      ) : (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setIsEditing(true)}
-          style={{ marginTop: 16 }}
-        >
-          Edit Profile
-        </Button>
-      )}
+      {isSelf &&
+        (isEditing ? (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setIsEditing(false)}
+            style={{ marginTop: 16 }}
+          >
+            Save Changes
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setIsEditing(true)}
+            style={{ marginTop: 16 }}
+          >
+            Edit Profile
+          </Button>
+        ))}
     </div>
   );
 };

@@ -61,7 +61,9 @@ const AppLayout = () => {
               >
                 <MenuItem
                   onClick={() => {
-                    navigate({ to: "/profile" });
+                    navigate({
+                      to: `/profile`,
+                    });
                     closeMenu();
                   }}
                 >
