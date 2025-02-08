@@ -3,6 +3,9 @@ import { userAtom } from "@/atoms";
 import { User } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 
+const DEFAULT_USER_IMAGE =
+  "https://static.vecteezy.com/system/resources/thumbnails/001/840/618/small/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg";
+
 export const useUser = () => {
   const [user, setUser] = useRecoilState(userAtom);
 
@@ -27,8 +30,11 @@ export const useUser = () => {
     }) => login(username, password),
     onSuccess: (user) => {
       if (user) {
-        setUser(user);
+        setUser({ ...user, image: user.image || DEFAULT_USER_IMAGE });
       }
+    },
+    onError: (error) => {
+      return error.message;
     },
   });
 
@@ -37,5 +43,11 @@ export const useUser = () => {
     setUser(null);
   };
 
-  return { user, login: loginMutation.mutate, logout };
+  return {
+    user,
+    login: loginMutation.mutate,
+    logout,
+    isLoggingIn: loginMutation.isPending,
+    loginError: loginMutation.error ? loginMutation.error.message : null,
+  };
 };
