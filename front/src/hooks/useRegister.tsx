@@ -15,6 +15,9 @@ export const useRegister = () => {
     image?: User["image"]
   ): Promise<User | null> => {
     //TODO: implement register logic
+    // INPUT: email, username, password, image (optional, needs to handle image upload)
+    // OUTPUT: user
+    // ERRORS: "Username is already taken", "Email is already in use", "Others"
     console.log(password);
     return new Promise<User | null>((resolve, reject) => {
       if (allUsers.some((user) => user.username === username)) {

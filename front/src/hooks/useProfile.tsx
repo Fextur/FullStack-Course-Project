@@ -10,6 +10,9 @@ export const useProfile = (id: User["id"]) => {
   const fetchUserProfile = async (id: User["id"]): Promise<User | null> => {
     if (id === user?.id) return user;
     // TODO: Fetch user profile from the server
+    // INPUT: optional id
+    // OUTPUT: user
+    // ERRORS: "User not found", "Unknow error"
     return allUsers.find((user) => user.id === id) || null;
   };
 
@@ -37,6 +40,9 @@ export const useProfile = (id: User["id"]) => {
           image: image || user.image,
         };
         // TODO: Update user profile on the server
+        // INPUT: id, username, image (needs to handle image upload)
+        // OUTPUT: updated user
+        // ERRORS: "Username is already taken", "Others"
 
         if (username === "test") {
           reject(new Error("Username is already taken"));
