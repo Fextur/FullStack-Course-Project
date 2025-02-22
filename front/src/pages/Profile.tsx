@@ -14,7 +14,8 @@ const Profile = () => {
   const { id } = useParams({ strict: false });
   const { profile, updateProfile, updateError, refetchProfile } =
     useProfile(id);
-  const { posts, isLoading } = usePosts(profile?.id);
+  const { posts, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    usePosts(profile?.id);
   const [isEditing, setIsEditing] = useState(false);
   const [newImage, setNewImage] = useState<User["image"] | null>(null);
   const [newUsername, setNewUsername] = useState<User["username"] | null>(null);
@@ -132,7 +133,14 @@ const Profile = () => {
       </div>
       <div style={{ height: "calc(100% - 310px)", overflowY: "auto" }}>
         <Loader isLoading={isLoading} />
-        {posts && <PostsList posts={posts} />}
+        {posts && (
+          <PostsList
+            posts={posts}
+            fetchNextPage={fetchNextPage}
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+          />
+        )}
       </div>
     </div>
   );

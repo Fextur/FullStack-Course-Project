@@ -8,6 +8,7 @@ const AppLayout = () => {
   const { user, logout } = useUser();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const closeMenu = () => setAnchorEl(null);
   return (
@@ -38,10 +39,15 @@ const AppLayout = () => {
           }}
         >
           <Button
-            component={Link}
-            to="/"
             sx={{ color: "white" }}
             startIcon={<Home size={20} />}
+            onClick={() => {
+              if (window.location.pathname === "/") {
+                setRefreshKey((prev) => prev + 1); // ✅ Trigger re-render
+              } else {
+                navigate({ to: "/" });
+              }
+            }}
           >
             Home
           </Button>
@@ -100,7 +106,7 @@ const AppLayout = () => {
           padding: "16px",
         }}
       >
-        <Outlet />
+        <Outlet key={refreshKey} />
       </div>
     </div>
   );
