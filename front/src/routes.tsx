@@ -14,7 +14,7 @@ import { useEffect } from "react";
 import Profile from "@/pages/Profile";
 import Register from "@/pages/Register";
 import Chat from "@/pages/Chat";
-import NewPost from "@/pages/NewPost";
+import Post from "@/pages/Post";
 
 const ProtectedLayout = () => {
   const { user } = useUser();
@@ -80,10 +80,16 @@ const defaultChatRoute = createRoute({
   component: Chat,
 });
 
-const postRoute = createRoute({
+const defaultPostRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/post/",
-  component: NewPost,
+  component: Post,
+});
+
+const postRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/post/$id",
+  component: Post,
 });
 
 const notFoundRoute = createRoute({
@@ -101,6 +107,7 @@ const routeTree = rootRoute.addChildren([
   defaultProfileRoute,
   chatRoute,
   postRoute,
+  defaultPostRoute,
   defaultChatRoute,
 ]);
 
