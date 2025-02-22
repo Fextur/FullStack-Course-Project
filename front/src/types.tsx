@@ -1,5 +1,6 @@
 export type User = {
   id: string;
+  email: string;
   username: string;
   image?: string;
 };
@@ -7,6 +8,7 @@ export type User = {
 export type Comment = {
   id: number;
   content: string;
+  user: User;
 };
 
 export type Post = {
@@ -14,6 +16,8 @@ export type Post = {
   image: string;
   content: string;
   likes: number;
-  comments: Comment[];
+  comments?: Comment[];
   user: User;
+  isUserLiked?: boolean;
+  commentsCount?: number;
 };
