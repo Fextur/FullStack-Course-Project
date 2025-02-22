@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "@tanstack/react-router";
 import { useProfile } from "@/hooks/useProfile";
 import { User } from "@/types";
 import { usePosts } from "@/hooks/usePosts";
-import PostsList from "@/components/PostsList";
+import PostsList from "@/components/PostsList/PostsList";
 import Loader from "@/components/Loader";
 
 const Profile = () => {

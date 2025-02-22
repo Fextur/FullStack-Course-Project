@@ -1,5 +1,5 @@
 import Loader from "@/components/Loader";
-import PostsList from "@/components/PostsList";
+import PostsList from "@/components/PostsList/PostsList";
 import { usePosts } from "@/hooks/usePosts";
 
 const Home = () => {

@@ -144,7 +144,7 @@ const AppLayout = () => {
           )}
         </Toolbar>
       </AppBar>
-      {user && location.pathname !== "/" && (
+      {location.pathname !== "/login" && location.pathname !== "/" && (
         <IconButton
           onClick={() => {
             router.history.go(-1);

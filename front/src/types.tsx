@@ -6,18 +6,17 @@ export type User = {
 };
 
 export type Comment = {
-  id: number;
+  id: string;
   content: string;
   user: User;
 };
 
 export type Post = {
-  id: number;
+  id: string;
   image: string;
   content: string;
   likes: number;
-  comments?: Comment[];
   user: User;
   isUserLiked?: boolean;
-  commentsCount?: number;
+  commentsCount: number;
 };
