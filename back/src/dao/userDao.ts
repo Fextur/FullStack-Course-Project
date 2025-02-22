@@ -7,26 +7,65 @@ type updateDao = {
   image?: IUser["image"];
 };
 
+type returnedUser = {
+  id: string;
+  email: string;
+  username: string;
+  image?: string;
+};
+
 class UserDao {
-  async createUser(userData: IUser): Promise<HydratedDocument<IUser>> {
+  async createUser(userData: IUser): Promise<returnedUser> {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(userData.password, salt);
 
     const newUser = new User({ ...userData, password: hashedPassword });
-    return newUser.save();
+    const savedUser = await newUser.save();
+
+    const { _id, email, username, image } = savedUser;
+
+    return {
+      id: _id.toString(), // Make sure _id is converted to string
+      email,
+      username,
+      image,
+    };
   }
 
-  async getUserById(
-    _id: IUser["_id"]
-  ): Promise<Omit<IUser, "password"> | null> {
-    return User.findOne({ _id }).select("-password");
+  async getUserById(_id: IUser["_id"]): Promise<returnedUser | null> {
+    const foundUser = await User.findOne({ _id })
+      .select("-password -tokens -_id -__v")
+      .lean();
+
+    if (!foundUser) return foundUser;
+    return {
+      ...foundUser,
+      id: _id,
+    };
   }
 
   async updateUserById(
     _id: IUser["_id"],
     updatedData: updateDao
-  ): Promise<IUser | null> {
-    return User.findOneAndUpdate({ _id }, updatedData, { new: true });
+  ): Promise<returnedUser | null> {
+    const updatedUser = await User.findOneAndUpdate({ _id }, updatedData, {
+      new: true,
+    });
+
+    if (!updatedUser) return null;
+
+    const {
+      password,
+      tokens,
+      _id: __id,
+      __v,
+      ...userWithoutProps
+    } = updatedUser.toObject();
+
+    return {
+      ...userWithoutProps,
+      id: _id,
+    };
   }
 }
 
