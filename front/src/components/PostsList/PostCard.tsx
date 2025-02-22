@@ -8,12 +8,13 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import { Heart, MessageCircle } from "lucide-react";
+import { Edit, Heart, MessageCircle } from "lucide-react";
 import { Post } from "../../types";
 import { useNavigate } from "@tanstack/react-router";
 import { useLike } from "@/hooks/useLike";
 import { useEffect, useState } from "react";
 import CommentsList from "@/components/PostsList/CommentsList";
+import { useUser } from "@/hooks/useUser";
 
 const PostCard = ({
   post,
@@ -22,6 +23,7 @@ const PostCard = ({
   post: Post;
   expandComments: (number: Post["commentsCount"]) => void;
 }) => {
+  const { user } = useUser();
   const navigate = useNavigate();
   const { isLiked, toggleLiked, isUpdating, likedCount } = useLike(post.id);
   const [showComments, setShowComments] = useState(false);
@@ -49,6 +51,21 @@ const PostCard = ({
           })
         }
         sx={{ cursor: "pointer" }}
+        action={
+          post.user.id === user?.id && (
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate({
+                  to: `/post/${post.id}`,
+                });
+              }}
+              sx={{ color: "gray" }}
+            >
+              <Edit size={20} />
+            </IconButton>
+          )
+        }
       />
       <CardMedia
         sx={{ objectFit: "contain" }}
