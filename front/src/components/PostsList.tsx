@@ -13,10 +13,11 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { Heart, MessageCircle } from "lucide-react";
 import { useRef } from "react";
 import { Post } from "../types";
+import { useNavigate } from "@tanstack/react-router";
 
 const PostsList = ({ posts }: { posts: Post[] }) => {
+  const navigate = useNavigate();
   const parentRef = useRef<HTMLDivElement | null>(null);
-
   const rowVirtualizer = useVirtualizer({
     count: posts.length,
     getScrollElement: () => parentRef.current,
@@ -50,6 +51,12 @@ const PostsList = ({ posts }: { posts: Post[] }) => {
             <CardHeader
               avatar={<Avatar src={post.user.image} />}
               title={post.user.username}
+              onClick={() =>
+                navigate({
+                  to: `/profile/${post.user.id}`,
+                })
+              }
+              sx={{ cursor: "pointer" }}
             />
             <CardMedia
               sx={{ objectFit: "contain" }}
@@ -66,7 +73,7 @@ const PostsList = ({ posts }: { posts: Post[] }) => {
               <IconButton
                 sx={{ outline: "none", "&:focus": { outline: "none" } }}
               >
-                <Heart />
+                {post.isUserLiked ? <Heart fill="black" /> : <Heart />}
               </IconButton>
               <Typography color="grey">{post.likes}</Typography>
               <IconButton
@@ -74,7 +81,7 @@ const PostsList = ({ posts }: { posts: Post[] }) => {
               >
                 <MessageCircle />
               </IconButton>
-              <Typography color="grey">{post.comments.length}</Typography>
+              <Typography color="grey">{post.commentsCount}</Typography>
             </CardActions>
           </Card>
         );

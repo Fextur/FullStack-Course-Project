@@ -1,45 +1,13 @@
-import { Post } from "../types";
+import Loader from "@/components/Loader";
 import PostsList from "@/components/PostsList";
-
-const posts: Post[] = [
-  {
-    id: 1,
-    image: "./tomato.webp",
-    content: "hi nkjdsfnc lnfscljs",
-    likes: 2,
-    comments: [{ id: 1, content: "aaa" }],
-    user: { id: "1", username: "haim" },
-  },
-  {
-    id: 2,
-    image: "./tomato.webp",
-    content: "hi nkjdsfnc lnfscljs",
-    likes: 2,
-    comments: [{ id: 1, content: "aaa" }],
-    user: { id: "1", username: "haim" },
-  },
-  {
-    id: 3,
-    image: "./tomato.webp",
-    content: "hi nkjdsfnc lnfscljs",
-    likes: 2,
-    comments: [{ id: 1, content: "aaa" }],
-    user: { id: "1", username: "haim" },
-  },
-  {
-    id: 4,
-    image: "./tomato.webp",
-    content: "hi nkjdsfnc lnfscljs",
-    likes: 2,
-    comments: [{ id: 1, content: "aaa" }],
-    user: { id: "1", username: "haim" },
-  },
-];
+import { usePosts } from "@/hooks/usePosts";
 
 const Home = () => {
+  const { posts, isLoading } = usePosts();
   return (
     <div style={{ height: "85vh", width: "100vw" }}>
-      <PostsList posts={posts} />
+      <Loader isLoading={isLoading} />
+      {posts && <PostsList posts={posts} />}
     </div>
   );
 };
