@@ -113,7 +113,7 @@ const CommentsList = ({
                             color="primary"
                             sx={{ marginLeft: 1 }}
                             onClick={() => {
-                              if (!commentContent.trim()) return; // ✅ Prevent sending empty comments
+                              if (!commentContent.trim()) return;
                               addComment(commentContent);
                               setCommentContent("");
                             }}
