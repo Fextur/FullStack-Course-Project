@@ -5,17 +5,13 @@ import { posts as postsData } from "@/data/posts";
 const POSTS_PER_PAGE = 40;
 
 export const usePosts = (userId?: User["id"]) => {
-  // TODO: will fetch a consistent amount of posts, and have a fetch to fetch the nexts posts
-
   const fetchPosts = async ({
     pageParam,
-    userId,
   }: {
     pageParam: number;
-    userId?: User["id"];
   }): Promise<Post[]> => {
     // TODO: Fetch posts from the API
-    // INPUT: optional userId
+    // INPUT: optional userId, pageParam
     // OUTPUT: posts
     // ERRORS: "User not found", "Unknow error"
     const allPosts = userId
@@ -34,7 +30,7 @@ export const usePosts = (userId?: User["id"]) => {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: ["posts", userId],
-      queryFn: ({ pageParam }) => fetchPosts({ pageParam, userId }),
+      queryFn: ({ pageParam }) => fetchPosts({ pageParam }),
       initialPageParam: 1,
       getNextPageParam: (lastPage, allPages) =>
         lastPage.length < POSTS_PER_PAGE ? undefined : allPages.length + 1,
