@@ -3,7 +3,12 @@ import { Request, Response } from "express";
 import userDao from "../dao/userDao";
 import User, { IUser } from "../models/userModel";
 import jwt from "jsonwebtoken";
-import { getToken, getJWTexpire, getRefreshToken } from "../constants/congif";
+import {
+  getToken,
+  getJWTexpire,
+  getRefreshToken,
+  getRefreshTokenexpire,
+} from "../constants/config";
 
 export const createUser = async (req: Request, res: Response) => {
   try {
@@ -20,7 +25,7 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const getUser = async (req: Request, res: Response) => {
   try {
-    const user = await userDao.getUserById(req.params.id);
+    const user = await userDao.getUserById(req.params.userId);
     if (user) {
       res.status(200).json(user);
     } else {
@@ -37,7 +42,10 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const updatedUser = await userDao.updateUserById(req.params.id, req.body);
+    const updatedUser = await userDao.updateUserById(
+      req.params.userId,
+      req.body
+    );
     if (updatedUser) {
       res.status(200).json(updatedUser);
     } else {
@@ -68,15 +76,15 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 
     const accessToken = jwt.sign(
-      { id: user._id, username: user.username, email: user.email },
+      { _id: user._id, username: user.username, email: user.email },
       getToken(),
       { expiresIn: getJWTexpire() }
     );
 
     const refreshToken = jwt.sign(
-      { id: user._id, username: user.username, email: user.email },
+      { _id: user._id, username: user.username, email: user.email },
       getRefreshToken(),
-      { expiresIn: getJWTexpire() }
+      { expiresIn: getRefreshTokenexpire() }
     );
 
     if (user.tokens == null) user.tokens = [refreshToken];
@@ -86,8 +94,9 @@ export const loginUser = async (req: Request, res: Response) => {
 
     res.json({
       accessToken,
+      refreshToken,
       user: {
-        id: user._id,
+        _id: user._id,
         username: user.username,
         email: user.email,
         image: user.image,
@@ -113,7 +122,7 @@ export const logoutUser = async (req: Request, res: Response) => {
   try {
     const decoded = jwt.verify(token, getRefreshToken()) as IUser;
 
-    const user = await User.findOne({ id: decoded._id });
+    const user = await User.findOne({ _id: decoded._id });
 
     if (!user) {
       return res.status(401).json({ message: "Invalid request" });
@@ -127,7 +136,7 @@ export const logoutUser = async (req: Request, res: Response) => {
 
     user.tokens.splice(user.tokens.indexOf(token), 1);
     await user.save();
-    res.status(200).send();
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     return res.status(403).json({ message: "Invalid or expired token." });
   }
@@ -147,7 +156,7 @@ export const refreshToken = async (req: Request, res: Response) => {
   try {
     const decoded = jwt.verify(token, getRefreshToken()) as IUser;
 
-    const user = await User.findOne({ id: decoded._id });
+    const user = await User.findOne({ _id: decoded._id });
 
     if (!user) {
       return res.status(401).json({ message: "Invalid request" });
@@ -160,13 +169,13 @@ export const refreshToken = async (req: Request, res: Response) => {
     }
 
     const accessToken = jwt.sign(
-      { id: decoded._id, username: decoded.username, email: decoded.email },
+      { _id: decoded._id, username: decoded.username, email: decoded.email },
       getToken(),
       { expiresIn: getJWTexpire() }
     );
 
     const refreshToken = jwt.sign(
-      { id: decoded._id, username: decoded.username, email: decoded.email },
+      { _id: decoded._id, username: decoded.username, email: decoded.email },
       getRefreshToken(),
       { expiresIn: getJWTexpire() }
     );

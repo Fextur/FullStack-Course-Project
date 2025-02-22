@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { getToken } from "../constants/congif";
+import { getToken } from "../constants/config";
 import { IUser } from "../models/userModel";
 
 export const authMiddleware = (
@@ -8,15 +8,15 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const authorization = req.header("Authorization");
+  const authorization = req.header("authorization");
 
-  if (!authorization || !authorization.startsWith("Bearer ")) {
+  const token = authorization && authorization.split(" ")[1];
+
+  if (token === undefined) {
     return res
       .status(401)
       .json({ message: "Access denied. No token provided." });
   }
-
-  const token = authorization.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, getToken()) as IUser;

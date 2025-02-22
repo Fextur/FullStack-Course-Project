@@ -16,15 +16,17 @@ class UserDao {
     return newUser.save();
   }
 
-  async getUserById(id: IUser["_id"]): Promise<Omit<IUser, "password"> | null> {
-    return User.findOne({ id }).select("-password");
+  async getUserById(
+    _id: IUser["_id"]
+  ): Promise<Omit<IUser, "password"> | null> {
+    return User.findOne({ _id }).select("-password");
   }
 
   async updateUserById(
-    id: IUser["_id"],
+    _id: IUser["_id"],
     updatedData: updateDao
   ): Promise<IUser | null> {
-    return User.findOneAndUpdate({ id }, updatedData, { new: true });
+    return User.findOneAndUpdate({ _id }, updatedData, { new: true });
   }
 }
 

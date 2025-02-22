@@ -6,7 +6,7 @@ export interface IUser extends Document {
   username: string;
   password: string;
   image?: string;
-  tokens?: [String];
+  tokens?: String[];
 }
 
 const userSchema = new Schema(
@@ -15,7 +15,7 @@ const userSchema = new Schema(
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true, unique: true },
     image: { type: String, default: "" },
-    tokens: { type: [String] },
+    tokens: { type: [String], default: [] },
   },
   { collection: "Users" }
 );

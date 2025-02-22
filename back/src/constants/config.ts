@@ -31,3 +31,13 @@ export const getJWTexpire = () => {
 
   return Number(process.env.TOKEN_EXPIRES) || "1h";
 };
+
+export const getRefreshTokenexpire = () => {
+  if (!process.env.REFRESH_TOKEN_EXPIRES) {
+    throw new Error(
+      "REFRESH_TOKEN_EXPIRES is missing from environment variables"
+    );
+  }
+
+  return Number(process.env.REFRESH_TOKEN_EXPIRES) || "7d";
+};
