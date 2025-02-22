@@ -1,5 +1,9 @@
+import { useParams } from "@tanstack/react-router";
+
 const Chat = () => {
-  return <h1>Chat Page</h1>;
+  const { id } = useParams({ strict: false });
+
+  return <h1>Chat Page{id && ` with ${id}`} </h1>;
 };
 
 export default Chat;
