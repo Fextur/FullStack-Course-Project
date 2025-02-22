@@ -6,7 +6,7 @@ type updateDao = {
   image?: IUser["image"];
 };
 
-type returnedUser = {
+export type returnedUser = {
   id: string;
   email: string;
   username: string;
