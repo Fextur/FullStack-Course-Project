@@ -100,11 +100,11 @@ class PostDao {
     if (post.likes.includes(userObjectId)) {
       post.likes = post.likes.filter((like) => !like.equals(userObjectId));
       await post.save();
-      return { message: "Post unliked successfully" };
+      return { isUserLiked: false };
     } else {
       post.likes.push(userObjectId);
       await post.save();
-      return { message: "Post liked successfully" };
+      return { isUserLiked: true };
     }
   }
 
