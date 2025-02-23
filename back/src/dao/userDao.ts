@@ -1,5 +1,4 @@
 import User, { IUser } from "../models/userModel";
-import { HydratedDocument } from "mongoose";
 import bcrypt from "bcrypt";
 
 type updateDao = {
@@ -7,7 +6,7 @@ type updateDao = {
   image?: IUser["image"];
 };
 
-type returnedUser = {
+export type returnedUser = {
   id: string;
   email: string;
   username: string;
@@ -25,7 +24,7 @@ class UserDao {
     const { _id, email, username, image } = savedUser;
 
     return {
-      id: _id.toString(), // Make sure _id is converted to string
+      id: _id.toString(),
       email,
       username,
       image,
