@@ -9,8 +9,12 @@ import commentRoutes from "./routes/commentRoute";
 const app = express();
 
 app.use(express.json());
-app.use(cors());
-
+app.use(cors({
+  origin: 'http://localhost:5173', // Vite default port
+  methods: ['GET','POST','PUT','DELETE'], // Allow your required HTTP methods
+  allowedHeaders: 'Content-Type, Authorization', // Allow necessary headers
+  credentials: true,
+}));
 mongoose
   .connect(mongoURI)
   .then(() => console.log("Connected to MongoDB"))

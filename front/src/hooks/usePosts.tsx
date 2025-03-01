@@ -1,8 +1,10 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { Post, User } from "@/types";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { NewPost, Post, User } from "@/types";
 import { posts as postsData } from "@/data/posts";
+import axios from "axios";
 
 const POSTS_PER_PAGE = 40;
+const BASE_URL: string = import.meta.env.VITE_BASE_URL;
 
 export const usePosts = (userId?: User["id"]) => {
   const fetchPosts = async ({
@@ -27,6 +29,60 @@ export const usePosts = (userId?: User["id"]) => {
     return paginatedPosts;
   };
 
+  const createPost = async (newPost: NewPost) => {
+    try {
+      const { data } = await axios.post(
+        `${BASE_URL}/api/posts`,
+        { newPost },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new Error("An unexpected error occurred");
+    }
+  };
+
+  const updatePost = async (postId: string, content: string, image: string) => {
+    try {
+      const { data } = await axios.put(
+        `${BASE_URL}/api/posts/${postId}`,
+        { content, image },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new Error("An unexpected error occurred");
+    }
+  };
+
+  const createPostMutation = useMutation({
+    mutationFn: ({ newPost }: { newPost: NewPost }) => createPost(newPost),
+  });
+
+  const updatePostMutation = useMutation({
+    mutationFn: ({
+      postId,
+      content,
+      image,
+    }: {
+      postId: string;
+      content: string;
+      image: string;
+    }) => updatePost(postId, content, image),
+  });
+
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: ["posts", userId],
@@ -37,6 +93,8 @@ export const usePosts = (userId?: User["id"]) => {
     });
 
   return {
+    createPostMutation,
+    updatePostMutation,
     posts: data?.pages.flat() || [],
     isLoading,
     fetchNextPage,
