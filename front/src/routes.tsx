@@ -13,7 +13,7 @@ import { useUser } from "@/hooks/useUser";
 import { useEffect } from "react";
 import Profile from "@/pages/Profile";
 import Register from "@/pages/Register";
-import Chat from "@/pages/Chat";
+import Chat from "@/pages/Chat/Chat";
 import Post from "@/pages/Post";
 
 const ProtectedLayout = () => {

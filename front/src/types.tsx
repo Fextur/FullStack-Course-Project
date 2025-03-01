@@ -20,3 +20,14 @@ export type Post = {
   isUserLiked?: boolean;
   commentsCount: number;
 };
+
+export type ChatMessage = User & {
+  message: string;
+  dateTime: Date;
+};
+
+export type ChatUser = User & {
+  lastMessage: ChatMessage["message"];
+  unreadCount: number;
+  dateTime: ChatMessage["dateTime"];
+};
