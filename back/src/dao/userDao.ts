@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 type updateDao = {
   username?: IUser["username"];
   image?: IUser["image"];
+  tokens?: string[];
 };
 
 export type returnedUser = {
