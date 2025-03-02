@@ -17,17 +17,13 @@ type returnedPost = {
   commentsCount?: number;
 };
 
-type NewPost = {
-  userId: string;
-  content: string;
-  image: string;
-};
-
 class PostDao {
-  async createPost(postTosave: NewPost): Promise<returnedPost> {
+  async createPost(
+    userId: string,
+    content: string,
+    image: string
+  ): Promise<returnedPost> {
     try {
-      const { userId, image, content } = postTosave;
-      
       const newPost = new Post({
         image,
         content,

@@ -29,11 +29,11 @@ export const usePosts = (userId?: User["id"]) => {
     return paginatedPosts;
   };
 
-  const createPost = async (newPost: NewPost) => {
-    try {
+  const createPost = async (userId: string, content: string, image: string) => {
+    try {//TODO:use userId with JWT
       const { data } = await axios.post(
         `${BASE_URL}/api/posts`,
-        { newPost },
+        { content, image },
         {
           headers: {
             "Content-Type": "application/json",
@@ -68,7 +68,15 @@ export const usePosts = (userId?: User["id"]) => {
   };
 
   const createPostMutation = useMutation({
-    mutationFn: ({ newPost }: { newPost: NewPost }) => createPost(newPost),
+    mutationFn: ({
+      userId,
+      content,
+      image,
+    }: {
+      userId: string;
+      content: string;
+      image: string;
+    }) => createPost(userId, content, image),
   });
 
   const updatePostMutation = useMutation({

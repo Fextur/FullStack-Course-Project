@@ -23,9 +23,7 @@ const Post = () => {
     }
   }, [id]);
 
-  const handleImageChange = (
-    event: ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0];
 
     if (file) {
@@ -134,11 +132,9 @@ const Post = () => {
                       image: imagePreviewUrl,
                     })
                   : createPostMutation.mutate({
-                      newPost: {
-                        userId: user?.id,
-                        content: content,
-                        image: imagePreviewUrl,
-                      },
+                      userId: user?.id,
+                      content: content,
+                      image: imagePreviewUrl,
                     });
             }}
           >

@@ -3,9 +3,10 @@ import postDao from "../dao/postDao";
 
 export const createPost = async (req: Request, res: Response) => {
   try {
-    const { newPost } = req.body;
+    const { content, image } = req.body;
+    const userId = req.params.currentUserId;
 
-    const savedPost = await postDao.createPost(newPost);
+    const savedPost = await postDao.createPost(userId, content, image);
 
     return res.status(201).json(savedPost);
   } catch (error: unknown) {
