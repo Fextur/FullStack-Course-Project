@@ -2,18 +2,22 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { User } from "@/types";
 import { useRecoilState } from "recoil";
 import { userAtom } from "@/atoms";
-import { allUsers } from "@/data/users";
+import api from "@/axios/axios";
+import { API_ROUTES } from "@/axios/apiRoutes";
 
 export const useProfile = (id: User["id"]) => {
   const [user, setUser] = useRecoilState(userAtom);
 
   const fetchUserProfile = async (id: User["id"]): Promise<User | null> => {
-    if (id === user?.id) return user;
-    // TODO: Fetch user profile from the server
-    // INPUT: id
-    // OUTPUT: user
-    // ERRORS: "User not found", "Unknow error"
-    return allUsers.find((user) => user.id === id) || null;
+    try {
+      if (id === user?.id) return user;
+      const fetchedUser = await api.get<User>(`${API_ROUTES.users}/${id}`);
+
+      return fetchedUser.data;
+    } catch (error) {
+      console.error("Error fetching user ", error);
+      throw error;
+    }
   };
 
   const {
@@ -30,27 +34,21 @@ export const useProfile = (id: User["id"]) => {
     username: User["username"] | null,
     image: User["image"] | null
   ): Promise<User | null> => {
-    return new Promise<User | null>((resolve, reject) => {
+    try {
       if (!user || user.id !== id) {
-        reject(new Error("You can only update your own profile."));
-      } else {
-        const updatedUser: User = {
-          ...user,
-          username: username || user.username,
-          image: image || user.image,
-        };
-        // TODO: Update user profile on the server
-        // INPUT: id, username, image (needs to handle image upload)
-        // OUTPUT: updated user
-        // ERRORS: "Username is already taken", "Others"
-
-        if (username === "test") {
-          reject(new Error("Username is already taken"));
-        } else {
-          resolve(updatedUser);
-        }
+        throw new Error("You can only update your own profile.");
       }
-    });
+
+      const updatedUser = await api.put<User>(`${API_ROUTES.users}/${id}`, {
+        username: username || user.username,
+        image: image || user.image,
+      });
+
+      return updatedUser.data;
+    } catch (error) {
+      console.error("Error fetching user ", error);
+      throw error;
+    }
   };
 
   const updateProfileMutation = useMutation({

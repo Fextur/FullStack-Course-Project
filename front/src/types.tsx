@@ -5,6 +5,11 @@ export type User = {
   image?: string;
 };
 
+export type UserWithToken = {
+  accessToken: string;
+  user: User;
+};
+
 export type Comment = {
   id: string;
   content: string;

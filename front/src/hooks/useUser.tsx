@@ -1,8 +1,9 @@
 import { useRecoilState } from "recoil";
 import { userAtom } from "@/atoms";
-import { User } from "@/types";
+import { User, UserWithToken } from "@/types";
 import { useMutation } from "@tanstack/react-query";
-import { allUsers } from "@/data/users";
+import api from "@/axios/axios";
+import { API_ROUTES } from "@/axios/apiRoutes";
 
 export const DEFAULT_USER_IMAGE =
   "https://static.vecteezy.com/system/resources/thumbnails/001/840/618/small/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg";
@@ -11,19 +12,19 @@ export const useUser = () => {
   const [user, setUser] = useRecoilState(userAtom);
 
   const login = async (username: User["username"], password: string) => {
-    //TODO: implement login logic
-    // INPUT: username, password
-    // OUTPUT: user
-    // ERRORS: "Invalid credentials"
+    try {
+      const user = await api.post<UserWithToken>(`${API_ROUTES.users}/login`, {
+        username,
+        password,
+      });
 
-    return new Promise<User | null>((resolve, reject) => {
-      const user = allUsers.find((user) => user.username === username);
-      if (user && password === "123") {
-        resolve(user);
-      } else {
-        reject(new Error("Invalid credentials"));
-      }
-    });
+      localStorage.setItem("accessToken", user.data.accessToken);
+
+      return user.data.user;
+    } catch (error) {
+      console.error("Invalid credentials ", error);
+      throw error;
+    }
   };
 
   const loginMutation = useMutation({
@@ -41,12 +42,15 @@ export const useUser = () => {
     },
   });
 
-  const logout = () => {
-    //TODO: implement logout logic
-    // INPUT: none
-    // OUTPUT: none
-    // ERRORS: "Unknow error"
-    setUser(null);
+  const logout = async () => {
+    try {
+      await api.post<User>(`${API_ROUTES.users}/logout`);
+      localStorage.removeItem("accessToken");
+      setUser(null);
+    } catch (error) {
+      console.error("Error in logout", error);
+      throw error;
+    }
   };
 
   return {
