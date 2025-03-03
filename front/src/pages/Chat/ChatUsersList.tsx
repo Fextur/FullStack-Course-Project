@@ -1,13 +1,25 @@
+import Loader from "@/components/Loader";
 import useChatUsers from "@/hooks/useChatUsers";
 import ChatUserItem from "@/pages/Chat/ChatUserItem";
 import { List, Paper } from "@mui/material";
+import { useEffect } from "react";
 
 interface IChatUsersListProps {
   selectedUserId: string;
 }
 
 const ChatUsersList = (props: IChatUsersListProps) => {
-  const { chatUsers } = useChatUsers();
+  const { chatUsers, clearUnreadCount, isLoading } = useChatUsers();
+
+  useEffect(() => {
+    if (
+      props.selectedUserId &&
+      chatUsers.some(
+        (user) => user.id === props.selectedUserId && user.unreadCount !== 0
+      )
+    )
+      clearUnreadCount(props.selectedUserId);
+  }, [props.selectedUserId, clearUnreadCount]);
   return (
     <Paper
       sx={{
@@ -18,14 +30,17 @@ const ChatUsersList = (props: IChatUsersListProps) => {
         backgroundColor: "#e2e0e0",
       }}
     >
+      <Loader isLoading={isLoading} />
       <List>
-        {chatUsers.map((chatUser) => (
-          <ChatUserItem
-            key={chatUser.id}
-            chatUser={chatUser}
-            isSelected={chatUser.id === props.selectedUserId}
-          />
-        ))}
+        {chatUsers
+          .sort((a, b) => b.dateTime.getTime() - a.dateTime.getTime())
+          .map((chatUser) => (
+            <ChatUserItem
+              key={chatUser.id}
+              chatUser={chatUser}
+              isSelected={chatUser.id === props.selectedUserId}
+            />
+          ))}
       </List>
     </Paper>
   );

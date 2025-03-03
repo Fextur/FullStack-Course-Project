@@ -22,13 +22,17 @@ const messages = {}; // Store messages per conversation
 // Function to create a unique room ID (sorting ensures consistency)
 const getRoomId = (user1, user2) => `room_${[user1, user2].sort().join("_")}`;
 
+const getNotificationRoomId = (user) => `room_${user}_notifications`;
+
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
   // Handle user joining with their userId
   socket.on("join", ({ userId, otherUserId }) => {
     users[userId] = socket.id;
-    const roomId = getRoomId(userId, otherUserId);
+    const roomId = otherUserId
+      ? getRoomId(userId, otherUserId)
+      : getNotificationRoomId(userId);
     socket.join(roomId);
     console.log(`User ${userId} joined room: ${roomId}`);
   });
@@ -36,6 +40,8 @@ io.on("connection", (socket) => {
   // Handle sending messages to a specific room
   socket.on("sendMessage", ({ senderId, receiverId, message }) => {
     const roomId = getRoomId(senderId, receiverId);
+    const receiverNotificationRoom = getNotificationRoomId(receiverId);
+    const senderNotificationRoom = getNotificationRoomId(senderId);
     console.log(`Message in ${roomId}: ${message}`);
 
     // Save messages
@@ -44,6 +50,11 @@ io.on("connection", (socket) => {
 
     // Broadcast message to users in the room
     io.to(roomId).emit("receiveMessage", { senderId, message });
+    io.to(receiverNotificationRoom).emit("receiveMessage", {
+      senderId,
+      message,
+    });
+    io.to(senderNotificationRoom).emit("receiveMessage", { senderId, message });
   });
 
   // Handle user disconnect
@@ -54,7 +65,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 6565;
+const PORT = process.env.PORT || 6567;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

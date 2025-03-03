@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
 const MESSAGES_PER_PAGE = 20;
-const SOCKET_SERVER_URL = "http://localhost:6565";
+const SOCKET_SERVER_URL = "http://localhost:6567"; // I am lazy, this needs env
 
 const useChatMessages = (userId?: string) => {
   const { user } = useUser();
@@ -27,8 +27,7 @@ const useChatMessages = (userId?: string) => {
 
     newSocket.emit("join", { userId: user.id, otherUserId: userId });
 
-    newSocket.on("receiveMessage", (message: ChatMessage) => {
-      console.log("New Message:", message);
+    newSocket.on("receiveMessage", (_message: { message: string }) => {
       setUnreadCount((prev) => prev + 1);
     });
 
@@ -42,6 +41,11 @@ const useChatMessages = (userId?: string) => {
   }: {
     pageParam: number;
   }): Promise<ChatMessage[]> => {
+    // TODO: Fetch comments from the API
+    // INPUT:  pageParam, userId
+    // OUTPUT: messages
+    // EFFCTS: reset unread count in db
+    // ERRORS: "Unknow error"
     if (!userId || !user) return [];
     const startIndex = (pageParam - 1) * MESSAGES_PER_PAGE;
     return allMessages.slice(startIndex, startIndex + MESSAGES_PER_PAGE);
@@ -67,6 +71,7 @@ const useChatMessages = (userId?: string) => {
       // TODO: sends new message
       // INPUT: message, receiverId
       // OUTPUT: ChatMessage
+      // EFFECT: adds to unread count
       // ERRORS: "Others"
 
       if (!user) return;
