@@ -14,7 +14,7 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ArrowDown, Send } from "lucide-react";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface IChatMessagesViewProps {
   selectedUserId: string;
@@ -29,6 +29,7 @@ const ChatMessagesView = (props: IChatMessagesViewProps) => {
     isFetchingNextPage,
     resetQuery,
     unreadCount,
+    resetReadCount,
   } = useChatMessages(props.selectedUserId);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const [messageContent, setMessageContent] = useState("");
@@ -70,6 +71,17 @@ const ChatMessagesView = (props: IChatMessagesViewProps) => {
     rowVirtualizer.getVirtualItems(),
   ]);
 
+  const handleSend = () => {
+    if (parentRef.current) {
+      rowVirtualizer.scrollToIndex(0);
+      resetQuery();
+      setAtBottom(true);
+    }
+    if (!messageContent.trim()) return;
+    sendMessage(messageContent);
+    setMessageContent("");
+  };
+
   useEffect(() => {
     if (parentRef.current) {
       const handleScroll = (e: WheelEvent) => {
@@ -98,7 +110,7 @@ const ChatMessagesView = (props: IChatMessagesViewProps) => {
 
   useEffect(() => {
     if (unreadCount !== 0 && atBottom) {
-      console.log("here");
+      resetReadCount();
       resetQuery();
     }
   }, [unreadCount, atBottom]);
@@ -287,21 +299,14 @@ const ChatMessagesView = (props: IChatMessagesViewProps) => {
           variant="outlined"
           size="small"
           fullWidth
-        />
-        <IconButton
-          color="primary"
-          sx={{ marginLeft: 1 }}
-          onClick={() => {
-            if (parentRef.current) {
-              rowVirtualizer.scrollToIndex(0);
-              resetQuery();
-              setAtBottom(true);
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
             }
-            if (!messageContent.trim()) return;
-            sendMessage(messageContent);
-            setMessageContent("");
           }}
-        >
+        />
+        <IconButton color="primary" sx={{ marginLeft: 1 }} onClick={handleSend}>
           <Send size={20} />
         </IconButton>
       </Box>
