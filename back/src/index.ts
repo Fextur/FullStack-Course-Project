@@ -1,20 +1,25 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import { mongoURI, PORT } from "./constants/config";
+import { CLIENT_URL, mongoURI, PORT } from "./constants/config";
 import userRoutes from "./routes/userRoute";
 import postRoutes from "./routes/postRoute";
 import commentRoutes from "./routes/commentRoute";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 app.use(express.json());
-app.use(cors({
-  origin: 'http://localhost:5173', // Vite default port
-  methods: ['GET','POST','PUT','DELETE'], // Allow your required HTTP methods
-  allowedHeaders: 'Content-Type, Authorization', // Allow necessary headers
-  credentials: true,
-}));
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: CLIENT_URL,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: "Content-Type, Authorization",
+    credentials: true,
+  })
+);
+
 mongoose
   .connect(mongoURI)
   .then(() => console.log("Connected to MongoDB"))

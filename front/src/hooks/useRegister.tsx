@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import { User } from "@/types";
-import { DEFAULT_USER_IMAGE } from "@/hooks/useUser";
+import { User, UserWithToken } from "@/types";
 import { useSetRecoilState } from "recoil";
 import { userAtom } from "@/atoms";
-import { allUsers } from "@/data/users";
+import api from "@/axios/axios";
+import { API_ROUTES } from "@/axios/apiRoutes";
 
 export const useRegister = () => {
   const setUser = useSetRecoilState(userAtom);
@@ -14,25 +14,20 @@ export const useRegister = () => {
     password: string,
     image?: User["image"]
   ): Promise<User | null> => {
-    //TODO: implement register logic
-    // INPUT: email, username, password, image (optional, needs to handle image upload)
-    // OUTPUT: user
-    // ERRORS: "Username is already taken", "Email is already in use", "Others"
-    console.log(password);
-    return new Promise<User | null>((resolve, reject) => {
-      if (allUsers.some((user) => user.username === username)) {
-        reject(new Error("Username is already taken"));
-      } else if (allUsers.some((user) => user.email === email)) {
-        reject(new Error("Email is already in use"));
-      } else {
-        resolve({
-          id: allUsers.length.toString(),
-          email,
-          username,
-          image: image ?? DEFAULT_USER_IMAGE,
-        });
-      }
-    });
+    try {
+      const user = await api.post<UserWithToken>(API_ROUTES.users, {
+        email,
+        username,
+        password,
+        image,
+      });
+      localStorage.setItem("accessToken", user.data.accessToken);
+
+      return user.data.user;
+    } catch (error) {
+      console.error("Error creating user:", error);
+      throw error;
+    }
   };
   const registerMutation = useMutation({
     mutationFn: ({
