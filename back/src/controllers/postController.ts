@@ -6,9 +6,9 @@ export const createPost = async (req: Request, res: Response) => {
     const { content, image } = req.body;
     const userId = req.params.currentUserId;
 
-    const savedPost = await postDao.createPost(userId, content, image);
+    const newPost = await postDao.createPost(userId, content, image);
 
-    return res.status(201).json(savedPost);
+    return res.status(201).json(newPost);
   } catch (error: unknown) {
     if (error instanceof Error) {
       return res.status(500).json({ message: error.message });

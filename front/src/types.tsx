@@ -25,9 +25,3 @@ export type Post = {
   isUserLiked?: boolean;
   commentsCount: number;
 };
-
-export type NewPost = {
-  image: string;
-  content: string;
-  userId: string;
-}

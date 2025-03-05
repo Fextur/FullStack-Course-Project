@@ -34,7 +34,7 @@ export const usePosts = (userId?: User["id"]) => {
 
   const createPost = async (content: string, image: string) => {
     try {
-      const { data } = await api.post(API_ROUTES.posts, { content, image });
+      const { data } = await api.post<Post>(API_ROUTES.posts, { content, image });
       return data;
     } catch (error) {
       console.error(error);
@@ -44,7 +44,7 @@ export const usePosts = (userId?: User["id"]) => {
 
   const updatePost = async (postId: string, content: string, image: string) => {
     try {
-      const { data } = await api.put(`${API_ROUTES.posts}/${postId}`, {
+      const { data } = await api.put<Post>(`${API_ROUTES.posts}/${postId}`, {
         content,
         image,
       });

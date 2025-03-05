@@ -131,7 +131,6 @@ const Post = () => {
                       image: imagePreviewUrl,
                     })
                   : createPostMutation.mutate({
-                      userId: user?.id,
                       content: content,
                       image: imagePreviewUrl,
                     });
