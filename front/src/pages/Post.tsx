@@ -117,7 +117,6 @@ const Post = () => {
             placeholder="Write something about the post"
             multiline
             rows={10}
-            maxRows={4}
           />
           <Button
             size="large"

@@ -1,12 +1,15 @@
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
-import { NewPost, Post, User } from "@/types";
+import { Post, User } from "@/types";
 import { posts as postsData } from "@/data/posts";
-import axios from "axios";
+import api from "@/axios/axios";
+import { API_ROUTES } from "@/axios/apiRoutes";
+import { useNavigate } from "@tanstack/react-router";
 
 const POSTS_PER_PAGE = 40;
-const BASE_URL: string = import.meta.env.VITE_BASE_URL;
 
 export const usePosts = (userId?: User["id"]) => {
+  const navigate = useNavigate();
+
   const fetchPosts = async ({
     pageParam,
   }: {
@@ -29,18 +32,9 @@ export const usePosts = (userId?: User["id"]) => {
     return paginatedPosts;
   };
 
-  const createPost = async (userId: string, content: string, image: string) => {
-    try {//TODO:use userId with JWT
-      const { data } = await axios.post(
-        `${BASE_URL}/api/posts`,
-        { content, image },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+  const createPost = async (content: string, image: string) => {
+    try {
+      const { data } = await api.post(API_ROUTES.posts, { content, image });
       return data;
     } catch (error) {
       console.error(error);
@@ -50,16 +44,10 @@ export const usePosts = (userId?: User["id"]) => {
 
   const updatePost = async (postId: string, content: string, image: string) => {
     try {
-      const { data } = await axios.put(
-        `${BASE_URL}/api/posts/${postId}`,
-        { content, image },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const { data } = await api.put(`${API_ROUTES.posts}/${postId}`, {
+        content,
+        image,
+      });
       return data;
     } catch (error) {
       console.error(error);
@@ -69,14 +57,17 @@ export const usePosts = (userId?: User["id"]) => {
 
   const createPostMutation = useMutation({
     mutationFn: ({
-      userId,
       content,
       image,
     }: {
-      userId: string;
       content: string;
       image: string;
-    }) => createPost(userId, content, image),
+    }) => createPost(content, image),
+    onSuccess: () => {
+      navigate({
+        to: "/",
+      });
+    },
   });
 
   const updatePostMutation = useMutation({
@@ -89,6 +80,11 @@ export const usePosts = (userId?: User["id"]) => {
       content: string;
       image: string;
     }) => updatePost(postId, content, image),
+    onSuccess: () => {
+      navigate({
+        to: "/",
+      });
+    },
   });
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
