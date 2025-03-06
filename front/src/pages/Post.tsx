@@ -11,7 +11,8 @@ const Post = () => {
 
   const { id } = useParams({ strict: false });
   const { user } = useUser();
-  const { createPostMutation, updatePostMutation, posts } = usePosts();
+  const { createPostMutation, updatePostMutation, deletePostMutation, posts } =
+    usePosts();
 
   useEffect(() => {
     if (id) {
@@ -118,26 +119,45 @@ const Post = () => {
             multiline
             rows={10}
           />
-          <Button
-            size="large"
-            sx={{ marginLeft: "44%", marginTop: "5px" }}
-            disabled={!content.length || !imagePreviewUrl}
-            onClick={() => {
-              if (user && content && imagePreviewUrl)
-                id
-                  ? updatePostMutation.mutate({
-                      postId: id as string,
-                      content: content,
-                      image: imagePreviewUrl,
-                    })
-                  : createPostMutation.mutate({
-                      content: content,
-                      image: imagePreviewUrl,
-                    });
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
             }}
           >
-            {id ? "EDIT" : "POST"}
-          </Button>
+            <Button
+              size="large"
+              sx={{ marginTop: "5px" }}
+              disabled={!content.length || !imagePreviewUrl}
+              onClick={() => {
+                if (user && content && imagePreviewUrl)
+                  id
+                    ? updatePostMutation.mutate({
+                        postId: id as string,
+                        content: content,
+                        image: imagePreviewUrl,
+                      })
+                    : createPostMutation.mutate({
+                        content: content,
+                        image: imagePreviewUrl,
+                      });
+              }}
+            >
+              {id ? "EDIT" : "POST"}
+            </Button>
+            {id && (
+              <Button
+                size="large"
+                color="error"
+                sx={{ marginTop: "5px" }}
+                onClick={() => {
+                  deletePostMutation.mutate({ postId: id });
+                }}
+              >
+                {"DELETE"}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </>

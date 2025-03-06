@@ -1,6 +1,5 @@
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
-import { Post, User } from "@/types";
-import { posts as postsData } from "@/data/posts";
+import { Post, ReturnedMessage, User } from "@/types";
 import api from "@/axios/axios";
 import { API_ROUTES } from "@/axios/apiRoutes";
 import { useNavigate } from "@tanstack/react-router";
@@ -52,6 +51,16 @@ export const usePosts = (userId?: User["id"]) => {
     }
   };
 
+  const deletePost = async(postId: string) =>{
+    try {
+      const { data } = await api.delete<ReturnedMessage>(`${API_ROUTES.posts}/${postId}`);
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new Error("An unexpected error occurred");
+    }
+  }
+
   const createPostMutation = useMutation({
     mutationFn: ({ content, image }: { content: string; image: string }) =>
       createPost(content, image),
@@ -79,6 +88,19 @@ export const usePosts = (userId?: User["id"]) => {
     },
   });
 
+  const deletePostMutation = useMutation({
+    mutationFn: ({
+      postId,
+    }: {
+      postId: string;
+    }) => deletePost(postId),
+    onSuccess: () => {
+      navigate({
+        to: "/",
+      });
+    },
+  });
+
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: ["posts", userId],
@@ -91,6 +113,7 @@ export const usePosts = (userId?: User["id"]) => {
   return {
     createPostMutation,
     updatePostMutation,
+    deletePostMutation,
     posts: data?.pages.flat() || [],
     isLoading,
     fetchNextPage,
