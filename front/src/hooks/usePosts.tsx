@@ -10,31 +10,28 @@ const POSTS_PER_PAGE = 40;
 export const usePosts = (userId?: User["id"]) => {
   const navigate = useNavigate();
 
-  const fetchPosts = async ({
-    pageParam,
-  }: {
-    pageParam: number;
-  }): Promise<Post[]> => {
-    // TODO: Fetch posts from the API
-    // INPUT: optional userId, pageParam
-    // OUTPUT: posts
-    // ERRORS: "User not found", "Unknow error"
-    const allPosts = userId
-      ? postsData.filter((post) => post.user.id === userId)
-      : postsData;
+  const fetchPosts = async ({ pageParam }: { pageParam: number }) => {
+    try {
+      const apiUrl = userId
+        ? `${API_ROUTES.posts}/${userId}`
+        : API_ROUTES.posts;
+      const { data } = await api.get<Post[]>(apiUrl, {
+        params: { page: pageParam, limit: POSTS_PER_PAGE },
+      });
 
-    const startIndex = (pageParam - 1) * POSTS_PER_PAGE;
-    const paginatedPosts = allPosts.slice(
-      startIndex,
-      startIndex + POSTS_PER_PAGE
-    );
-
-    return paginatedPosts;
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new Error("An unexpected error occurred");
+    }
   };
 
   const createPost = async (content: string, image: string) => {
     try {
-      const { data } = await api.post<Post>(API_ROUTES.posts, { content, image });
+      const { data } = await api.post<Post>(API_ROUTES.posts, {
+        content,
+        image,
+      });
       return data;
     } catch (error) {
       console.error(error);
@@ -56,13 +53,8 @@ export const usePosts = (userId?: User["id"]) => {
   };
 
   const createPostMutation = useMutation({
-    mutationFn: ({
-      content,
-      image,
-    }: {
-      content: string;
-      image: string;
-    }) => createPost(content, image),
+    mutationFn: ({ content, image }: { content: string; image: string }) =>
+      createPost(content, image),
     onSuccess: () => {
       navigate({
         to: "/",

@@ -17,8 +17,8 @@ const Post = () => {
     if (id) {
       const currentPost = posts.find((post) => post.id === id);
       if (currentPost) {
-        setContent(currentPost?.content);
-        setImagePreviewUrl(currentPost?.image);
+        setContent(currentPost.content);
+        setImagePreviewUrl(currentPost.image);
       }
     }
   }, [id]);
