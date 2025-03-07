@@ -28,4 +28,10 @@ export type Post = {
 
 export type ReturnedMessage = {
   message: string;
+};
+
+export enum ContentType {
+  JOKE = "Tell a funny short joke.",
+  QUOTE = "Give me a short emotional and inspiring quote.",
+  FUN_FACT = "Tell me a short interesting and fun fact.",
 }

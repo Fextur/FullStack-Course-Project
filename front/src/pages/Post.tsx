@@ -1,6 +1,15 @@
+import { useContent } from "@/hooks/useContent";
 import { usePosts } from "@/hooks/usePosts";
 import { useUser } from "@/hooks/useUser";
-import { Box, Button, IconButton, TextField } from "@mui/material";
+import { ContentType } from "@/types";
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useParams } from "@tanstack/react-router";
 import { Upload } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -11,6 +20,7 @@ const Post = () => {
 
   const { id } = useParams({ strict: false });
   const { user } = useUser();
+  const { generateContent } = useContent();
   const { createPostMutation, updatePostMutation, deletePostMutation, posts } =
     usePosts();
 
@@ -23,6 +33,11 @@ const Post = () => {
       }
     }
   }, [id]);
+
+  const handleContentGenerate = async (contentType: ContentType) => {
+    const newContent = await generateContent(contentType);
+    setContent(newContent)
+  }
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0];
@@ -119,6 +134,18 @@ const Post = () => {
             multiline
             rows={10}
           />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Typography>Generate content: </Typography>
+            <Button onClick={() => handleContentGenerate(ContentType.JOKE)}>Joke</Button>
+            <Button onClick={() => handleContentGenerate(ContentType.QUOTE)}>Quote</Button>
+            <Button onClick={() => handleContentGenerate(ContentType.FUN_FACT)}>Fun fact</Button>
+          </div>
+          <Divider />
           <div
             style={{
               display: "flex",
