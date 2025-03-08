@@ -15,6 +15,7 @@ import { useLike } from "@/hooks/useLike";
 import { useEffect, useState } from "react";
 import CommentsList from "@/components/PostsList/CommentsList";
 import { useUser } from "@/hooks/useUser";
+import { useComments } from "@/hooks/useComments";
 
 const PostCard = ({
   post,
@@ -26,6 +27,7 @@ const PostCard = ({
   const { user } = useUser();
   const navigate = useNavigate();
   const { isLiked, toggleLiked, isUpdating, likedCount } = useLike(post.id);
+  const {comments} = useComments(post.id);
   const [showComments, setShowComments] = useState(false);
 
   useEffect(() => {
@@ -99,7 +101,7 @@ const PostCard = ({
         >
           <MessageCircle />
         </IconButton>
-        <Typography color="grey">{post.commentsCount}</Typography>
+        <Typography color="grey">{comments.length}</Typography>
       </CardActions>
       {showComments && (
         <CommentsList postId={post.id} expandComments={expandComments} />
