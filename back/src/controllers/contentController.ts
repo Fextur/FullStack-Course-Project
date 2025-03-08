@@ -4,9 +4,6 @@ import contentDao from "../dao/contentDao";
 export const generateContent = async (req: Request, res: Response)=> {
   try {
     const { contentType } = req.body;
-    console.log({req});
-    
-
     const content = await contentDao.generateContent(contentType);
 
     return res.status(201).json(content);
