@@ -15,6 +15,7 @@ import Profile from "@/pages/Profile";
 import Register from "@/pages/Register";
 import Chat from "@/pages/Chat";
 import Post from "@/pages/Post";
+import Comments from "./pages/Comments";
 
 const ProtectedLayout = () => {
   const { user } = useUser();
@@ -92,6 +93,12 @@ const postRoute = createRoute({
   component: Post,
 });
 
+const commentsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/comments/$postId",
+  component: Comments,
+});
+
 const notFoundRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "*",
@@ -107,6 +114,7 @@ const routeTree = rootRoute.addChildren([
   defaultProfileRoute,
   chatRoute,
   postRoute,
+  commentsRoute,
   defaultPostRoute,
   defaultChatRoute,
 ]);
