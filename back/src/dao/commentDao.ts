@@ -52,28 +52,32 @@ class CommentDao {
     limit: number,
     postId: string
   ): Promise<returnedComment[]> {
-    const skip = (page - 1) * limit;
+    try {
+      const skip = (page - 1) * limit;
 
-    const comments = await Comment.find({ post: postId })
-      .skip(skip)
-      .limit(limit)
-      .populate("user", "id email username image")
-      .exec();
+      const comments = await Comment.find({ post: postId })
+        .skip(skip)
+        .limit(limit)
+        .populate("user", "id email username image")
+        .exec();
 
-    const parsedComments = comments.map((comment) => {
-      return {
-        id: comment._id.toString(),
-        content: comment.content,
-        user: {
-          id: comment.user._id,
-          email: comment.user.email,
-          username: comment.user.username,
-          image: comment.user.image,
-        },
-      };
-    });
+      const parsedComments = comments.map((comment) => {
+        return {
+          id: comment._id.toString(),
+          content: comment.content,
+          user: {
+            id: comment.user._id,
+            email: comment.user.email,
+            username: comment.user.username,
+            image: comment.user.image,
+          },
+        };
+      });
 
-    return parsedComments;
+      return parsedComments;
+    } catch (error) {
+      throw new Error("Error getting comments");
+    }
   }
 }
 

@@ -2,6 +2,8 @@ import { useMutation } from "@tanstack/react-query";
 import { Post } from "@/types";
 import { usePosts } from "@/hooks/usePosts";
 import { useState } from "react";
+import api from "@/axios/axios";
+import { API_ROUTES } from "@/axios/apiRoutes";
 
 export const useLike = (postId: Post["id"]) => {
   const { posts } = usePosts();
@@ -12,14 +14,15 @@ export const useLike = (postId: Post["id"]) => {
     posts.find((post) => post.id === postId)?.likes
   );
 
-  const toggleLiked = async (): Promise<boolean | null> => {
-    return new Promise<boolean | null>((resolve, _reject) => {
-      // TODO: Update liked status on that post from my user
-      // INPUT: new state
-      // OUTPUT: new state
-      // ERRORS: "Others"
-      resolve(!isLiked);
-    });
+  const toggleLiked = async (): Promise<boolean | undefined> => {
+    try {
+      const { data } = await api.post<{ isUserLiked: boolean }>(
+        `${API_ROUTES.posts}/like/${postId}`
+      );
+      return data.isUserLiked;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const updateLikedMutation = useMutation({
