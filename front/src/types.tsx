@@ -25,3 +25,7 @@ export type Post = {
   isUserLiked?: boolean;
   commentsCount: number;
 };
+
+export type ReturnedMessage = {
+  message: string;
+}
