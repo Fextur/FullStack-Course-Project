@@ -1,32 +1,26 @@
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { Comment, Post } from "@/types";
-import { usePosts } from "@/hooks/usePosts";
-import { generateComments } from "@/data/comments";
-import { useUser } from "@/hooks/useUser";
+import api from "@/axios/axios";
+import { API_ROUTES } from "@/axios/apiRoutes";
 
 const COMMENTS_PER_PAGE = 5;
 
 export const useComments = (postId: Post["id"]) => {
   /// TODO: needs to be sure the refetch on addComment is working
-  const { posts } = usePosts();
-  const { user } = useUser();
 
   const fetchComments = async ({
     pageParam,
   }: {
     pageParam: number;
-  }): Promise<Comment[]> => {
-    // TODO: Fetch comments from the API
-    // INPUT:  pageParam
-    // OUTPUT: comments
-    // ERRORS: "Post not found", "Unknow error"
-
-    const startIndex = (pageParam - 1) * COMMENTS_PER_PAGE;
-    const paginatedComments = generateComments(
-      posts.find((post) => post.id === postId)?.commentsCount || 0
-    ).slice(startIndex, startIndex + COMMENTS_PER_PAGE);
-
-    return paginatedComments;
+  }): Promise<Comment[] | undefined> => {
+    try {
+      const { data } = await api.get(`${API_ROUTES.comments}/${postId}`, {
+        params: { page: pageParam, limit: COMMENTS_PER_PAGE },
+      });
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const {
@@ -41,20 +35,23 @@ export const useComments = (postId: Post["id"]) => {
     queryFn: ({ pageParam }) => fetchComments({ pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) =>
-      lastPage.length < COMMENTS_PER_PAGE ? undefined : allPages.length + 1,
+      lastPage && lastPage.length < COMMENTS_PER_PAGE
+        ? undefined
+        : allPages.length + 1,
   });
 
   const addComment = async (
     content: Comment["content"]
-  ): Promise<Comment | null> => {
-    return new Promise<Comment | null>((resolve, _reject) => {
-      // TODO: creates comment
-      // INPUT: content
-      // OUTPUT: Comment
-      // ERRORS: "Others"
-      if (user) resolve({ id: "999", content, user });
-      else resolve(null);
-    });
+  ): Promise<Comment | undefined> => {
+    try {
+      const { data } = await api.post<Comment>(API_ROUTES.comments, {
+        postId,
+        content,
+      });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const addCommentMutation = useMutation({

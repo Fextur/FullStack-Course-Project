@@ -12,9 +12,9 @@ import { Edit, Heart, MessageCircle } from "lucide-react";
 import { Post } from "../../types";
 import { useNavigate } from "@tanstack/react-router";
 import { useLike } from "@/hooks/useLike";
-import { useEffect, useState } from "react";
-import CommentsList from "@/components/PostsList/CommentsList";
+import { useEffect } from "react";
 import { useUser } from "@/hooks/useUser";
+import { useComments } from "@/hooks/useComments";
 
 const PostCard = ({
   post,
@@ -26,7 +26,7 @@ const PostCard = ({
   const { user } = useUser();
   const navigate = useNavigate();
   const { isLiked, toggleLiked, isUpdating, likedCount } = useLike(post.id);
-  const [showComments, setShowComments] = useState(false);
+  const { comments } = useComments(post.id);
 
   useEffect(() => {
     return () => {
@@ -93,17 +93,13 @@ const PostCard = ({
             cursor: "pointer",
           }}
           onClick={() => {
-            if (showComments) expandComments(0);
-            setShowComments(!showComments);
+            navigate({ to: `/comments/${post.id}` });
           }}
         >
           <MessageCircle />
         </IconButton>
-        <Typography color="grey">{post.commentsCount}</Typography>
+        <Typography color="grey">{comments.length}</Typography>
       </CardActions>
-      {showComments && (
-        <CommentsList postId={post.id} expandComments={expandComments} />
-      )}
     </Card>
   );
 };

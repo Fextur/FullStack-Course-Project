@@ -6,7 +6,11 @@ const CommentItem = ({ comment }: { comment: Comment }) => {
   const navigate = useNavigate();
 
   return (
-    <ListItem disablePadding>
+    <ListItem disablePadding sx={{
+      display: "flex",
+      alignItems: "center",
+      gap: 1.5,
+    }}>
       <ListItemIcon
         onClick={() =>
           navigate({
