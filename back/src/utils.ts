@@ -6,16 +6,11 @@ import {
   getToken,
 } from "./constants/config";
 
-type Payload =
-  | {
-      _id: string;
-      username: string;
-      email: string;
-    }
-  | {
-      username: string;
-      email: string;
-    };
+type Payload = {
+  _id: string;
+  username: string;
+  email: string;
+};
 
 export const getTokens = (payload: Payload) => {
   const accessToken = jwt.sign(payload, getToken(), {

@@ -57,6 +57,7 @@ export const handleGoogleAuth = async (req: Request, res: Response) => {
         } as IUser);
 
         const { refreshToken, accessToken } = getTokens({
+          _id: newUser.id,
           username: newUser.username,
           email: newUser.email,
         });
