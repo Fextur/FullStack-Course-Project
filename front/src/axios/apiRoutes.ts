@@ -5,6 +5,7 @@ export const API_ROUTES = {
   posts: `${API_BASE_URL}/posts`,
   comments: `${API_BASE_URL}/comments`,
   auth: `${API_BASE_URL}/auth`,
+  content: `${API_BASE_URL}/content`
 };
 
 export { API_BASE_URL };

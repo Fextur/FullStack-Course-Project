@@ -7,22 +7,17 @@ import {
   ListItemButton,
   ListItemText,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Post } from "../../types";
 import { useComments } from "@/hooks/useComments";
 import CommentItem from "@/components/PostsList/CommentItem";
 import { useUser } from "@/hooks/useUser";
 import { Send } from "lucide-react";
 
-const CommentsList = ({
-  postId,
-  expandComments,
-}: {
-  postId: Post["id"];
-  expandComments: (number: Post["commentsCount"]) => void;
-}) => {
+const CommentsList = ({ postId }: { postId: Post["id"] }) => {
   const { user } = useUser();
   const parentRef = useRef<HTMLDivElement | null>(null);
   const {
@@ -41,20 +36,23 @@ const CommentsList = ({
     overscan: 6,
   });
 
-  useEffect(() => {
-    expandComments(comments.length + (hasNextPage ? 2 : 1));
-  }, [comments, hasNextPage]);
-
   return (
     <Box
       ref={parentRef}
       sx={{
+        padding: 5,
         width: "100%",
         height: "100%",
         overflowY: "auto",
         justifyItems: "center",
       }}
     >
+      {rowVirtualizer.getVirtualItems().length === 1 && (
+        <Typography sx={{ paddingBottom: 1, paddingRight: 10 }}>
+          No comments. Be the first one!
+        </Typography>
+      )}
+
       <div
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,
@@ -107,11 +105,10 @@ const CommentsList = ({
                             placeholder="Write a comment..."
                             variant="outlined"
                             size="small"
-                            fullWidth
+                            sx={{ width: "85%" }}
                           />
                           <IconButton
                             color="primary"
-                            sx={{ marginLeft: 1 }}
                             onClick={() => {
                               if (!commentContent.trim()) return;
                               addComment(commentContent);
