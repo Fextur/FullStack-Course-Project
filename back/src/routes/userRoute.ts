@@ -8,12 +8,13 @@ import {
   refreshToken,
 } from "../controllers/userController";
 import { authMiddleware } from "../middlewares/authMiddleware";
+import { upload } from "../middlewares/upload";
 
 const router = Router();
 
-router.post("/", createUser);
+router.post("/", upload.single("image"), createUser);
 router.get("/:userId", authMiddleware, getUser);
-router.put("/:userId", authMiddleware, updateUser);
+router.put("/:userId", authMiddleware, upload.single("image"), updateUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 router.post("/refreshToken", refreshToken);

@@ -7,11 +7,12 @@ import {
   removePost,
 } from "../controllers/postController";
 import { authMiddleware } from "../middlewares/authMiddleware";
+import { upload } from "../middlewares/upload";
 
 const router = express.Router();
 
-router.post("/", authMiddleware, createPost);
-router.put("/:postId", authMiddleware, updatePost);
+router.post("/", authMiddleware, upload.single("image"), createPost);
+router.put("/:postId", authMiddleware, upload.single("image"), updatePost);
 router.delete("/:postId", authMiddleware, removePost);
 router.post("/like/:postId", authMiddleware, toggleLikePost);
 router.get("/:userId?", authMiddleware, getPosts);
