@@ -16,6 +16,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 
 const Post = () => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const [content, setContent] = useState<string>("");
 
   const { id } = useParams({ strict: false });
@@ -36,13 +37,15 @@ const Post = () => {
 
   const handleContentGenerate = async (contentType: ContentType) => {
     const newContent = await generateContent(contentType);
-    setContent(newContent)
-  }
+    setContent(newContent);
+  };
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0];
 
     if (file) {
+      setImage(file);
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreviewUrl(reader.result as string);
@@ -141,9 +144,15 @@ const Post = () => {
             }}
           >
             <Typography>Generate content: </Typography>
-            <Button onClick={() => handleContentGenerate(ContentType.JOKE)}>Joke</Button>
-            <Button onClick={() => handleContentGenerate(ContentType.QUOTE)}>Quote</Button>
-            <Button onClick={() => handleContentGenerate(ContentType.FUN_FACT)}>Fun fact</Button>
+            <Button onClick={() => handleContentGenerate(ContentType.JOKE)}>
+              Joke
+            </Button>
+            <Button onClick={() => handleContentGenerate(ContentType.QUOTE)}>
+              Quote
+            </Button>
+            <Button onClick={() => handleContentGenerate(ContentType.FUN_FACT)}>
+              Fun fact
+            </Button>
           </div>
           <Divider />
           <div
@@ -162,11 +171,11 @@ const Post = () => {
                     ? updatePostMutation.mutate({
                         postId: id as string,
                         content: content,
-                        image: imagePreviewUrl,
+                        image: image,
                       })
                     : createPostMutation.mutate({
                         content: content,
-                        image: imagePreviewUrl,
+                        image: image,
                       });
               }}
             >

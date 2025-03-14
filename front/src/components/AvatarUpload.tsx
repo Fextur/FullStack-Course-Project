@@ -1,26 +1,21 @@
 import { User } from "@/types";
 import { Avatar } from "@mui/material";
 import { Camera } from "lucide-react";
+import { ChangeEvent } from "react";
 
 interface IAvatarUploadProps {
   image: User["image"];
-  setImage?: (image: User["image"]) => void;
+  handleImageChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   size?: number;
   displayOnly?: boolean;
 }
 
 const AvatarUpload: React.FC<IAvatarUploadProps> = ({
   image,
-  setImage,
+  handleImageChange,
   size = 90,
   displayOnly = false,
 }) => {
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (setImage && e.target.files && e.target.files[0]) {
-      setImage(URL.createObjectURL(e.target.files[0]));
-    }
-  };
-
   return (
     <div style={{ position: "relative", display: "inline-block" }}>
       <label

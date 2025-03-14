@@ -3,18 +3,48 @@ import { useNavigate } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
 import { TextField, Button, Typography, Paper } from "@mui/material";
 import { UserPlus } from "lucide-react";
-import { useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { DEFAULT_USER_IMAGE } from "@/hooks/useUser";
 import AvatarUpload from "@/components/AvatarUpload";
-import { User } from "@/types";
-
 const Register = () => {
   const { register, isRegistering, registerError } = useRegister();
   const navigate = useNavigate();
   const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("");
 
-  const [image, setImage] = useState<User["image"]>(DEFAULT_USER_IMAGE);
+  const [image, setImage] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>(DEFAULT_USER_IMAGE);
+
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      setImage(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  useEffect(() => {
+    const convertUrlToFile = async (url: string) => {
+      try {
+        const response = await fetch(url);
+        console.log(response);
+
+        const blob = await response.blob();
+        const file = new File([blob], "default-image.jpg", { type: blob.type });
+        setImage(file);
+      } catch (error) {
+        console.error("Error fetching the default image:", error);
+      }
+    };
+
+    convertUrlToFile(DEFAULT_USER_IMAGE);
+  }, []);
 
   const form = useForm({
     defaultValues: {
@@ -54,7 +84,7 @@ const Register = () => {
       </Typography>
 
       <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
-        <AvatarUpload image={image} setImage={setImage} />
+        <AvatarUpload image={imageUrl} handleImageChange={handleImageChange} />
       </div>
       <form
         onSubmit={(e) => {

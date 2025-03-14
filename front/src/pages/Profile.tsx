@@ -1,6 +1,6 @@
 import AvatarUpload from "@/components/AvatarUpload";
 import { DEFAULT_USER_IMAGE, useUser } from "@/hooks/useUser";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Button, TextField, Typography } from "@mui/material";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useProfile } from "@/hooks/useProfile";
@@ -17,12 +17,27 @@ const Profile = () => {
   const { posts, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     usePosts(profile?.id);
   const [isEditing, setIsEditing] = useState(false);
-  const [newImage, setNewImage] = useState<User["image"] | null>(null);
+  const [newImageUrl, setNewImageUrl] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const [newUsername, setNewUsername] = useState<User["username"] | null>(null);
 
   const navigate = useNavigate();
 
   const isSelf = profile?.id === user?.id;
+
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      setImage(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewImageUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   useEffect(() => {
     if (!id && user) {
@@ -48,8 +63,8 @@ const Profile = () => {
           style={{ display: "flex", justifyContent: "center", marginTop: 16 }}
         >
           <AvatarUpload
-            image={newImage ?? profile.image ?? DEFAULT_USER_IMAGE}
-            setImage={isEditing ? setNewImage : undefined}
+            image={newImageUrl ?? profile.image ?? DEFAULT_USER_IMAGE}
+            handleImageChange={isEditing ? handleImageChange : undefined}
             size={120}
             displayOnly={!isEditing}
           />
@@ -92,7 +107,7 @@ const Profile = () => {
                   {
                     id: user.id,
                     username: newUsername,
-                    image: newImage,
+                    image: image,
                   },
                   {
                     onSuccess: () => {
