@@ -89,6 +89,10 @@ router.post("/:currentUserId", authMiddleware, createPost);
  *     responses:
  *       200:
  *         description: Post updated successfully
+ *         content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/returnedPost'
  *       500:
  *         description: Server error
  */
@@ -109,7 +113,13 @@ router.put("/:postId", authMiddleware, updatePost);
  *         description: ID of the post to delete
  *     responses:
  *       200:
- *         description: Post deleted successfully
+ *        description: Post deleted successfully
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: boolean
+ *              description: Is post deleted successfully
+ *              example: true
  *       500:
  *         description: Server error
  */
@@ -137,6 +147,15 @@ router.delete("/:postId", authMiddleware, removePost);
  *     responses:
  *       200:
  *         description: Like/unlike toggled successfully
+ *         content:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                isUserLiked:
+ *                type: boolean
+ *                description: The new value of like field
+ *              example:
+ *                isUserLiked: true
  *       500:
  *         description: Server error
  */

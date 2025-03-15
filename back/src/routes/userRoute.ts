@@ -1,10 +1,8 @@
 /**
  * @swagger
  * tags:
- *   - name: Users
- *     description: The Users API
- *   - name: Auth
- *     description: The Authentication API
+ *   name: Users
+ *   description: The Users API
  */
 
 import { Router } from "express";
@@ -194,7 +192,7 @@ router.post("/logout", logoutUser);
  * /users/refreshToken:
  *   post:
  *     summary: Refresh access token
- *     tags: [Auth]
+ *     tags: [Users]
  *     description: Provide the refresh token in the Authorization header.
  *     security:
  *        - bearerAuth: []
