@@ -1,4 +1,5 @@
 import express from "express";
+import http from "http";
 import mongoose from "mongoose";
 import cors from "cors";
 import { CLIENT_URL, mongoURI, PORT } from "./constants/config";
@@ -31,7 +32,10 @@ app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/content", contentRoute);
 
+const server = http.createServer(app);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+export { server };
