@@ -49,6 +49,10 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  await postModel.deleteMany();
+  await userModel.deleteMany();
+  await commentModel.deleteMany();
+
   await mongoose.connection.close();
   server.close();
 });
