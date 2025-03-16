@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import ChatMessage, { IChatMesaege } from "../models/chatMessage";
 import ChatUser from "../models/chatUser";
 import User from "../models/userModel";
@@ -16,43 +17,49 @@ class chatMessageDao {
     message: string
   ): Promise<returnedMessage> {
     try {
-      const sender = await User.findById(senderId).populate("chatUsers.user");
-      console.log(JSON.stringify(sender));
-      console.log({ receiverId });
+      const receiver = await User.findById(receiverId).populate(
+        "chatUsers",
+        "user"
+      );
+      const sender = await User.findById(senderId);
+      const senderObjectId = new mongoose.Types.ObjectId(senderId);
 
-      const a = sender?.chatUsers.find(
-        (a) => JSON.stringify(a.user) === receiverId
+      const existingChatUser = receiver?.chatUsers.find((chatUser) =>
+        senderObjectId.equals(chatUser.user._id)
       );
 
-      console.log(a);
-      // if(sender?.chatUsers.find(a=>a.user._id === receiverId)){
-      //   console.log("aaa");
+      if (existingChatUser) {
+        await ChatUser.findOneAndUpdate(
+          { _id: existingChatUser._id },
+          {
+            $inc: { unreadCount: 1 },
+            $set: { lastMessage: message },
+          }
+        );
+      }
 
-      // }
+      if (!existingChatUser) {
+        const recieverChatUser = new ChatUser({
+          lastMessage: "",
+          unreadCount: 1,
+          user: receiver,
+        });
 
-      const receiver = await User.findById(receiverId);
+        const savedReciever = await recieverChatUser.save();
+        sender?.chatUsers.push(savedReciever);
 
-      const recieverChatUser = new ChatUser({
-        lastMessage: "",
-        unreadCount: 1,
-        user: receiver,
-      });
+        await sender?.save();
 
-      const savedReciever = await recieverChatUser.save();
-      sender?.chatUsers.push(savedReciever);
+        const senderChatUser = new ChatUser({
+          lastMessage: message,
+          unreadCount: 0,
+          user: sender,
+        });
+        const savedSender = await senderChatUser.save();
+        receiver?.chatUsers.push(savedSender);
 
-      await sender?.save();
-
-
-      const senderChatUser = new ChatUser({
-        lastMessage: message,
-        unreadCount: 0,
-        user: sender,
-      });
-      const savedSender = await senderChatUser.save();
-      receiver?.chatUsers.push(savedSender);
-
-      await receiver?.save();
+        await receiver?.save();
+      }
 
       const newMessage = new ChatMessage({
         message: message,
@@ -60,7 +67,9 @@ class chatMessageDao {
         sender: sender,
         createdAt: new Date(),
       });
+
       await newMessage.save();
+
       return {
         message: newMessage.message,
         receiverId: newMessage.receiver._id,
@@ -69,7 +78,7 @@ class chatMessageDao {
       };
     } catch (error) {
       console.error(error);
-      throw new Error("Error getting comments");
+      throw new Error("Error getting messages");
     }
   }
 

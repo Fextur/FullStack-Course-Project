@@ -65,7 +65,7 @@ const useChatMessages = (userId?: string) => {
   ): Promise<returnedMessage | undefined> => {
     try {
       const { data } = await api.post<returnedMessage>(
-        `${API_ROUTES.chatMessage}/message`,
+        `${API_ROUTES.chatMessage}`,
         { message: message, otherUser: userId }
       );
       return data;
