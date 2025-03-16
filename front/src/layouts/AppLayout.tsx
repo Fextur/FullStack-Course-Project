@@ -172,6 +172,7 @@ const AppLayout = () => {
           width: "100%",
           height: "90vh",
           overflow: "auto",
+          padding: "16px 26px",
         }}
       >
         <Outlet key={refreshKey} />

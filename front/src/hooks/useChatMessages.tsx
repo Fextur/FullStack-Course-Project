@@ -3,18 +3,17 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { generateMessage } from "@/data/messages";
 import { useUser } from "@/hooks/useUser";
-import { ChatMessage } from "@/types";
+import { ChatMessage, returnedMessage } from "@/types";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import api from "@/axios/axios";
+import { API_ROUTES } from "@/axios/apiRoutes";
 
 const MESSAGES_PER_PAGE = 20;
-const SOCKET_SERVER_URL = "http://localhost:6567"; // I am lazy, this needs env
 
 const useChatMessages = (userId?: string) => {
   const { user } = useUser();
-  const allMessages = user && userId ? generateMessage(user.id, userId) : [];
   const queryClient = useQueryClient();
   const [socket, setSocket] = useState<any>(null);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -22,7 +21,7 @@ const useChatMessages = (userId?: string) => {
   useEffect(() => {
     if (!user || !userId) return;
 
-    const newSocket = io(SOCKET_SERVER_URL);
+    const newSocket = io(import.meta.env.VITE_API_URL);
     setSocket(newSocket);
 
     newSocket.emit("join", { userId: user.id, otherUserId: userId });
@@ -40,15 +39,12 @@ const useChatMessages = (userId?: string) => {
     pageParam,
   }: {
     pageParam: number;
-  }): Promise<ChatMessage[]> => {
-    // TODO: Fetch comments from the API
-    // INPUT:  pageParam, userId
-    // OUTPUT: messages
-    // EFFCTS: reset unread count in db
-    // ERRORS: "Unknow error"
-    if (!userId || !user) return [];
-    const startIndex = (pageParam - 1) * MESSAGES_PER_PAGE;
-    return allMessages.slice(startIndex, startIndex + MESSAGES_PER_PAGE);
+  }): Promise<returnedMessage[]> => {
+    const { data } = await api.get<returnedMessage[]>(
+      `${API_ROUTES.chatMessage}/${userId}`,
+      { params: { page: pageParam, limit: MESSAGES_PER_PAGE } }
+    );
+    return data;
   };
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
@@ -66,28 +62,21 @@ const useChatMessages = (userId?: string) => {
 
   const sendMessage = async (
     message: ChatMessage["message"]
-  ): Promise<ChatMessage | null> => {
-    return new Promise<ChatMessage | null>((resolve, _reject) => {
-      // TODO: sends new message
-      // INPUT: message, receiverId
-      // OUTPUT: ChatMessage
-      // EFFECT: adds to unread count
-      // ERRORS: "Others"
-
-      if (!user) return;
-      const newMessage: ChatMessage = {
-        ...user,
-        message,
-        dateTime: new Date(),
-      };
-      if (user) resolve(newMessage);
-      else resolve(null);
-    });
+  ): Promise<returnedMessage | undefined> => {
+    try {
+      const { data } = await api.post<returnedMessage>(
+        `${API_ROUTES.chatMessage}/message`,
+        { message: message, otherUser: userId }
+      );
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const sendMessageMutation = useMutation({
     mutationFn: (message: ChatMessage["message"]) => sendMessage(message),
-    onSuccess: async (chatMessage: ChatMessage | null) => {
+    onSuccess: async (chatMessage: returnedMessage | undefined) => {
       if (!socket || !user || !userId || !chatMessage) return;
       await socket.emit("sendMessage", {
         senderId: user.id,

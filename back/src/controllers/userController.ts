@@ -13,13 +13,45 @@ import {
 export const createUser = async (req: Request, res: Response) => {
   try {
     const newUser = await userDao.createUser(req.body);
-    res.status(201).json(newUser);
+
+    const accessToken = jwt.sign(
+      { _id: newUser.id, username: newUser.username, email: newUser.email },
+      getToken(),
+      { expiresIn: getJWTexpire() }
+    );
+
+    const refreshToken = jwt.sign(
+      { _id: newUser.id, username: newUser.username, email: newUser.email },
+      getRefreshToken(),
+      { expiresIn: getRefreshTokenexpire() }
+    );
+
+    await userDao.updateUserById(newUser.id, { tokens: [refreshToken] });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+    });
+
+    res.status(201).json({
+      accessToken,
+      user: newUser,
+    });
   } catch (error) {
     if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "An unknown error occurred" });
+      if (error.name === "MongoServerError") {
+        if (error.message.includes("username")) {
+          return res.status(400).json({ message: "Username is already taken" });
+        }
+        if (error.message.includes("email")) {
+          return res.status(400).json({ message: "Email is already in use" });
+        }
+      }
     }
+
+    res.status(500).json({ message: "An unexpected error occurred" });
   }
 };
 
@@ -43,7 +75,7 @@ export const getUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
   try {
     const updatedUser = await userDao.updateUserById(
-      req.params.userId,
+      req.params.currentUserId,
       req.body
     );
     if (updatedUser) {
@@ -92,11 +124,17 @@ export const loginUser = async (req: Request, res: Response) => {
 
     await user.save();
 
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+    });
+
     res.json({
       accessToken,
-      refreshToken,
       user: {
-        _id: user._id,
+        id: user._id,
         username: user.username,
         email: user.email,
         image: user.image,
@@ -109,18 +147,16 @@ export const loginUser = async (req: Request, res: Response) => {
 };
 
 export const logoutUser = async (req: Request, res: Response) => {
-  const authorization = req.header("Authorization");
+  const refreshToken = req.cookies.refreshToken;
 
-  if (!authorization || !authorization.startsWith("Bearer ")) {
+  if (!refreshToken) {
     return res
       .status(401)
       .json({ message: "Access denied. No token provided." });
   }
 
-  const token = authorization.split(" ")[1];
-
   try {
-    const decoded = jwt.verify(token, getRefreshToken()) as IUser;
+    const decoded = jwt.verify(refreshToken, getRefreshToken()) as IUser;
 
     const user = await User.findOne({ _id: decoded._id });
 
@@ -128,13 +164,13 @@ export const logoutUser = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Invalid request" });
     }
 
-    if (!user.tokens?.includes(token)) {
+    if (!user.tokens?.includes(refreshToken)) {
       user.tokens = [""];
       await user.save();
       return res.status(401).json({ message: "Invalid req" });
     }
 
-    user.tokens.splice(user.tokens.indexOf(token), 1);
+    user.tokens.splice(user.tokens.indexOf(refreshToken), 1);
     await user.save();
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
@@ -143,18 +179,16 @@ export const logoutUser = async (req: Request, res: Response) => {
 };
 
 export const refreshToken = async (req: Request, res: Response) => {
-  const authorization = req.header("Authorization");
+  const refreshToken = req.cookies.refreshToken;
 
-  if (!authorization || !authorization.startsWith("Bearer ")) {
+  if (!refreshToken) {
     return res
       .status(401)
       .json({ message: "Access denied. No token provided." });
   }
 
-  const token = authorization.split(" ")[1];
-
   try {
-    const decoded = jwt.verify(token, getRefreshToken()) as IUser;
+    const decoded = jwt.verify(refreshToken, getRefreshToken()) as IUser;
 
     const user = await User.findOne({ _id: decoded._id });
 
@@ -162,7 +196,7 @@ export const refreshToken = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Invalid request" });
     }
 
-    if (!user.tokens?.includes(token)) {
+    if (!user.tokens?.includes(refreshToken)) {
       user.tokens = [""];
       await user.save();
       return res.status(401).json({ message: "Invalid req" });
@@ -174,16 +208,16 @@ export const refreshToken = async (req: Request, res: Response) => {
       { expiresIn: getJWTexpire() }
     );
 
-    const refreshToken = jwt.sign(
+    const newRefreshToken = jwt.sign(
       { _id: decoded._id, username: decoded.username, email: decoded.email },
       getRefreshToken(),
       { expiresIn: getJWTexpire() }
     );
 
-    user.tokens[user.tokens.indexOf(token)] = refreshToken;
+    user.tokens[user.tokens.indexOf(refreshToken)] = newRefreshToken;
     await user.save();
 
-    res.json({ accessToken, refreshToken });
+    res.json({ accessToken });
   } catch (error) {
     return res
       .status(403)

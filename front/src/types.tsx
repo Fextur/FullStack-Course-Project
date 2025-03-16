@@ -5,6 +5,11 @@ export type User = {
   image?: string;
 };
 
+export type UserWithToken = {
+  accessToken: string;
+  user: User;
+};
+
 export type Comment = {
   id: string;
   content: string;
@@ -31,3 +36,16 @@ export type ChatUser = User & {
   unreadCount: number;
   dateTime: ChatMessage["dateTime"];
 };
+
+export type returnedMessage = {
+  message: string;
+  receiverId: string;
+  senderId: string;
+  createdAt: Date;
+};
+
+export enum ContentType {
+  JOKE = "Tell a funny short joke.",
+  QUOTE = "Give me a short emotional and inspiring quote.",
+  FUN_FACT = "Tell me a short interesting and fun fact.",
+}
