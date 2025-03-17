@@ -6,6 +6,7 @@ export const API_ROUTES = {
   comments: `${API_BASE_URL}/comments`,
   content: `${API_BASE_URL}/content`,
   chatMessage: `${API_BASE_URL}/chatMessage`,
+  auth: `${API_BASE_URL}/auth`,
 };
 
 export { API_BASE_URL };

@@ -8,11 +8,13 @@ import {
   getJWTexpire,
   getRefreshToken,
   getRefreshTokenexpire,
+  BASE_URL,
 } from "../constants/config";
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const newUser = await userDao.createUser(req.body);
+    const image = req.file ? `${BASE_URL}/media/${req.file.filename}` : "";
+    const newUser = await userDao.createUser({ ...req.body, image });
 
     const accessToken = jwt.sign(
       { _id: newUser.id, username: newUser.username, email: newUser.email },
@@ -74,10 +76,11 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const updatedUser = await userDao.updateUserById(
-      req.params.currentUserId,
-      req.body
-    );
+    const image = req.file ? `${BASE_URL}/media/${req.file.filename}` : "";
+    const updatedUser = await userDao.updateUserById(req.params.currentUserId, {
+      ...req.body,
+      image,
+    });
     if (updatedUser) {
       res.status(200).json(updatedUser);
     } else {

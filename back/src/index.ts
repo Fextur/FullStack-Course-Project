@@ -7,6 +7,7 @@ import userRoutes from "./routes/userRoute";
 import postRoutes from "./routes/postRoute";
 import commentRoutes from "./routes/commentRoute";
 import chatMessageRoutes from "./routes/chatMessageRoute";
+import authRoutes from "./routes/authRoute"
 import contentRoute from "./routes/contentRoute";
 import cookieParser from "cookie-parser";
 import http  from "http";
@@ -30,7 +31,7 @@ app.use(
   cors({
     origin: CLIENT_URL,
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: "Content-Type, Authorization",
+    allowedHeaders: "Content-Type, Authorization, Cross-Origin-Opener-Policy, same-origin-allow-popups",
     credentials: true,
   })
 );
@@ -43,8 +44,10 @@ mongoose
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/auth", authRoutes)
 app.use("/api/content", contentRoute);
 app.use("/api/chatMessage", chatMessageRoutes)
+app.use("/api/media/", express.static("media"));
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
