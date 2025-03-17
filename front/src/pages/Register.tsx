@@ -33,7 +33,6 @@ const Register = () => {
     const convertUrlToFile = async (url: string) => {
       try {
         const response = await fetch(url);
-        console.log(response);
 
         const blob = await response.blob();
         const file = new File([blob], "default-image.jpg", { type: blob.type });
@@ -163,8 +162,6 @@ const Register = () => {
           validators={{
             onChange: ({ value }) => {
               const passwordValue = form.getFieldValue("password");
-              console.log("passwordValue", passwordValue);
-              console.log("value", value);
               return !value
                 ? "Confirm Password is required"
                 : value !== passwordValue
