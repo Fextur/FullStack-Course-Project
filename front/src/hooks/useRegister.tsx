@@ -12,15 +12,19 @@ export const useRegister = () => {
     email: User["email"],
     username: User["username"],
     password: string,
-    image?: User["image"]
+    image?: File | null
   ): Promise<User | null> => {
     try {
-      const user = await api.post<UserWithToken>(API_ROUTES.users, {
-        email,
-        username,
-        password,
-        image,
-      });
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("username", username);
+      formData.append("password", password);
+
+      if (image) {
+        formData.append("image", image);
+      }
+
+      const user = await api.post<UserWithToken>(API_ROUTES.users, formData);
       localStorage.setItem("accessToken", user.data.accessToken);
 
       return user.data.user;
@@ -39,7 +43,7 @@ export const useRegister = () => {
       email: User["email"];
       username: User["username"];
       password: string;
-      image?: User["image"];
+      image?: File | null;
     }) => registerUser(email, username, password, image),
     onSuccess: (user) => {
       if (user) {

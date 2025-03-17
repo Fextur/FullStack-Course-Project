@@ -4,6 +4,7 @@ import { User, UserWithToken } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import api from "@/axios/axios";
 import { API_ROUTES } from "@/axios/apiRoutes";
+import { CredentialResponse } from "@react-oauth/google";
 
 export const DEFAULT_USER_IMAGE =
   "https://static.vecteezy.com/system/resources/thumbnails/001/840/618/small/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg";
@@ -27,6 +28,18 @@ export const useUser = () => {
     }
   };
 
+  const googleLogin = async (credential: CredentialResponse["credential"]) => {
+    try {
+      const {data} = await api.post(`${API_ROUTES.auth}/google`, {credential})
+      localStorage.setItem("accessToken", data.accessToken);
+
+      return data.user;
+    } catch (error) {
+      console.error("Invalid credentials ", error);
+      throw error;
+    }
+  };
+
   const loginMutation = useMutation({
     mutationFn: ({
       username,
@@ -37,8 +50,24 @@ export const useUser = () => {
     }) => login(username, password),
     onSuccess: (user) => {
       if (user) {
+        console.log(user);
+        
         setUser({ ...user, image: user.image || DEFAULT_USER_IMAGE });
       }
+    },
+  });
+
+  const googleLoginMutation = useMutation({
+    mutationFn: ({
+      credential,
+    }: {
+      credential: CredentialResponse["credential"];
+    }) => googleLogin(credential),
+    onSuccess: (user) => {
+      if (user) {
+        setUser({ ...user, image: user.image || DEFAULT_USER_IMAGE });
+      }
+      
     },
   });
 
@@ -55,6 +84,7 @@ export const useUser = () => {
 
   return {
     user,
+    loginGoogle: googleLoginMutation.mutate,
     login: loginMutation.mutate,
     logout,
     isLoggingIn: loginMutation.isPending,
