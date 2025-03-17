@@ -21,7 +21,7 @@ const useChatUsers = () => {
       (chatMessage: { message: string; senderId: string }) => {
         setChatUsers((prev) =>
           prev.map((chatUser) =>
-            chatUser.id === chatMessage.senderId
+            chatUser.userId === chatMessage.senderId
               ? ({
                   ...chatUser,
                   unreadCount: chatUser.unreadCount + 1,
@@ -59,7 +59,7 @@ const useChatUsers = () => {
   const clearUnreadCount = (selectedUserId: ChatUser["id"]) => {
     setChatUsers((prev) =>
       prev.map((chatUser) =>
-        chatUser.id === selectedUserId
+        chatUser.userId === selectedUserId
           ? ({
               ...chatUser,
               unreadCount: 0,

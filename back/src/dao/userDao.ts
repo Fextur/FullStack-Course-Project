@@ -16,6 +16,7 @@ export type returnedUser = {
 
 type returnedChatUser = {
   id: string;
+  userId: string;
   username: string;
   email: string;
   image?: string;
@@ -80,10 +81,7 @@ class UserDao {
 
   async getChatUsers(_id: IUser["_id"]): Promise<returnedChatUser[] | null> {
     const user = await User.findById(_id)
-      .populate(
-        "chatUsers",
-        "id lastMessage unreadCount image user"
-      )
+      .populate("chatUsers", "id lastMessage unreadCount image user")
       .populate([
         {
           path: "chatUsers",
@@ -96,6 +94,7 @@ class UserDao {
     else {
       const formatedChatUsers = user?.chatUsers.map((chatUser) => ({
         id: chatUser._id.toString(),
+        userId: chatUser.user._id.toString(),
         username: chatUser.user.username,
         email: chatUser.user.email,
         image: chatUser.user.image,

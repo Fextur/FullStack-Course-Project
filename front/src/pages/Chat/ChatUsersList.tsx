@@ -36,9 +36,9 @@ const ChatUsersList = (props: IChatUsersListProps) => {
           .sort((a, b) => b.dateTime.getTime() - a.dateTime.getTime())
           .map((chatUser) => (
             <ChatUserItem
-              key={chatUser.id}
+              key={chatUser.userId}
               chatUser={chatUser}
-              isSelected={chatUser.id === props.selectedUserId}
+              isSelected={chatUser.userId === props.selectedUserId}
             />
           ))}
       </List>

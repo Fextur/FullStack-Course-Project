@@ -64,7 +64,7 @@ class chatMessageDao {
       const newMessage = new ChatMessage({
         message: message,
         receiver: receiver,
-        sender: sender
+        sender: sender,
       });
 
       await newMessage.save();
@@ -95,32 +95,21 @@ class chatMessageDao {
       })
         .skip(skip)
         .limit(limit)
-        .populate("receiver", "_id email username image")
-        .populate("sender", "_id email username image")
         .exec();
 
       const parsedMessages = messages.map((message) => {
         return {
           id: message._id.toString(),
           message: message.message,
-          receiver: {
-            id: message.receiver._id,
-            email: message.receiver.email,
-            username: message.receiver.username,
-            image: message.receiver.image,
-          },
-          sender: {
-            id: message.sender._id,
-            email: message.sender.email,
-            username: message.sender.username,
-            image: message.sender.image,
-          },
+          receiverId: message.receiver._id,
+          senderId: message.sender._id,
+          dateTime: message.dateTime
         };
       });
 
       return parsedMessages;
     } catch (error) {
-      throw new Error("Error getting comments");
+      throw new Error("Error getting messages");
     }
   }
 }

@@ -24,7 +24,7 @@ const ChatUserItem = (props: ChatUserItemProps) => {
     <ListItem disablePadding>
       <ListItemButton
         selected={props.isSelected}
-        onClick={() => navigate({ to: `/chat/${props.chatUser.id}` })}
+        onClick={() => navigate({ to: `/chat/${props.chatUser.userId}` })}
         sx={{
           "&.Mui-selected": {
             backgroundColor: "rgba(68, 68, 68, 0.77)",

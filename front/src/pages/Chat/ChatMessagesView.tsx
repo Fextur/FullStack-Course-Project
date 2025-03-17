@@ -205,16 +205,16 @@ const ChatMessagesView = (props: IChatMessagesViewProps) => {
                   <Box
                     sx={{
                       left:
-                        chatMessage.id === props.selectedUserId ? 0 : "auto",
+                        chatMessage.senderId === props.selectedUserId ? 0 : "auto",
                       right:
-                        chatMessage.id === props.selectedUserId ? "auto" : 0,
+                        chatMessage.senderId === props.selectedUserId ? "auto" : 0,
                       maxWidth: "75%",
                       padding: 1,
                       position: "absolute",
                       marginLeft: 1,
                       marginRight: 1,
                       backgroundColor:
-                        chatMessage.id === props.selectedUserId
+                        chatMessage.senderId === props.selectedUserId
                           ? "#E0E0E0"
                           : "#D1E8FF",
                       borderRadius: 2,
@@ -223,23 +223,23 @@ const ChatMessagesView = (props: IChatMessagesViewProps) => {
                       width: "fit-content",
                       "&::after":
                         virtualItem.index === 0 ||
-                        messages[virtualItem.index - 1].id !== chatMessage.id
+                        messages[virtualItem.index - 1].senderId !== chatMessage.senderId
                           ? {
                               content: "''",
                               position: "absolute",
                               bottom: "-15px",
                               left:
-                                chatMessage.id === props.selectedUserId
+                                chatMessage.senderId === props.selectedUserId
                                   ? "15px"
                                   : "auto",
                               right:
-                                chatMessage.id === props.selectedUserId
+                                chatMessage.senderId === props.selectedUserId
                                   ? "auto"
                                   : "15px",
                               borderWidth: "8px",
                               borderStyle: "solid",
                               borderColor:
-                                chatMessage.id === props.selectedUserId
+                                chatMessage.senderId === props.selectedUserId
                                   ? "#E0E0E0 transparent transparent transparent"
                                   : "#D1E8FF transparent transparent transparent",
                             }
