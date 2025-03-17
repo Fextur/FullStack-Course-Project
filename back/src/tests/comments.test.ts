@@ -2,7 +2,7 @@ import request from "supertest";
 import mongoose from "mongoose";
 import postModel from "../models/postModel";
 import userModel from "../models/userModel";
-import commentModel from "../models/commentModel"; // Add the comment model
+import commentModel from "../models/commentModel";
 import { mongoURI } from "../constants/config";
 import { server } from "../index";
 import fs from "fs";
