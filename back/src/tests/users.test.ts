@@ -1,6 +1,6 @@
 import request from "supertest";
 import mongoose from "mongoose";
-import { server } from "../index"; // Import the server object
+import { server } from "../index";
 import userModel from "../models/userModel";
 import { mongoURI } from "../constants/config";
 
