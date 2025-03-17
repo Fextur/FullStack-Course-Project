@@ -7,7 +7,7 @@ type returnedMessage = {
   message: string;
   receiverId: string;
   senderId: string;
-  createdAt: Date;
+  dateTime: Date;
 };
 
 class chatMessageDao {
@@ -64,8 +64,7 @@ class chatMessageDao {
       const newMessage = new ChatMessage({
         message: message,
         receiver: receiver,
-        sender: sender,
-        createdAt: new Date(),
+        sender: sender
       });
 
       await newMessage.save();
@@ -74,7 +73,7 @@ class chatMessageDao {
         message: newMessage.message,
         receiverId: newMessage.receiver._id,
         senderId: newMessage.sender._id,
-        createdAt: newMessage.createdAt,
+        dateTime: newMessage.dateTime,
       };
     } catch (error) {
       console.error(error);

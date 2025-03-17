@@ -6,6 +6,7 @@ export interface IChatUser extends Document {
   lastMessage?: string;
   unreadCount: number;
   user: IUser;
+  dateTime: Date;
 }
 
 const chatUserSchema = new Schema(
@@ -13,6 +14,7 @@ const chatUserSchema = new Schema(
     lastMessage: { type: String },
     unreadCount: { type: Number, required: true, default: 0 },
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    dateTime: { type: Date, required: true, default: Date.now },
   },
   { collection: "ChatUsers", timestamps: true }
 );

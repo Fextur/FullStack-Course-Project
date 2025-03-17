@@ -6,6 +6,7 @@ import {
   loginUser,
   logoutUser,
   refreshToken,
+  getChatUsers,
 } from "../controllers/userController";
 import { authMiddleware } from "../middlewares/authMiddleware";
 
@@ -17,5 +18,6 @@ router.put("/:userId", authMiddleware, updateUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 router.post("/refreshToken", refreshToken);
+router.get("/chat/:userId",authMiddleware, getChatUsers)
 
 export default router;

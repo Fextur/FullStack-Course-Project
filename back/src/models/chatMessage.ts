@@ -4,16 +4,25 @@ import { IUser } from "./userModel";
 export interface IChatMesaege extends Document {
   _id: mongoose.Types.ObjectId;
   message: string;
-  receiver:IUser;
+  receiver: IUser;
   sender: IUser;
-  createdAt: Date;
+  dateTime: Date;
 }
 
 const chatMesaegeSchema = new Schema(
   {
     message: { type: String, required: true },
-    receiver: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    sender: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    receiver: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    dateTime: { type: Date, required: true, default: Date.now },
   },
   { collection: "ChatMesaeges", timestamps: false }
 );

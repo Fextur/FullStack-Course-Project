@@ -4,7 +4,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useUser } from "@/hooks/useUser";
-import { ChatMessage, returnedMessage } from "@/types";
+import { ChatMessage } from "@/types";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import api from "@/axios/axios";
@@ -39,8 +39,8 @@ const useChatMessages = (userId?: string) => {
     pageParam,
   }: {
     pageParam: number;
-  }): Promise<returnedMessage[]> => {
-    const { data } = await api.get<returnedMessage[]>(
+  }): Promise<ChatMessage[]> => {
+    const { data } = await api.get<ChatMessage[]>(
       `${API_ROUTES.chatMessage}/${userId}`,
       { params: { page: pageParam, limit: MESSAGES_PER_PAGE } }
     );
@@ -62,9 +62,9 @@ const useChatMessages = (userId?: string) => {
 
   const sendMessage = async (
     message: ChatMessage["message"]
-  ): Promise<returnedMessage | undefined> => {
+  ): Promise<ChatMessage | undefined> => {
     try {
-      const { data } = await api.post<returnedMessage>(
+      const { data } = await api.post<ChatMessage>(
         `${API_ROUTES.chatMessage}`,
         { message: message, otherUser: userId }
       );
@@ -76,7 +76,7 @@ const useChatMessages = (userId?: string) => {
 
   const sendMessageMutation = useMutation({
     mutationFn: (message: ChatMessage["message"]) => sendMessage(message),
-    onSuccess: async (chatMessage: returnedMessage | undefined) => {
+    onSuccess: async (chatMessage: ChatMessage | undefined) => {
       if (!socket || !user || !userId || !chatMessage) return;
       await socket.emit("sendMessage", {
         senderId: user.id,

@@ -14,6 +14,16 @@ export type returnedUser = {
   image?: string;
 };
 
+type returnedChatUser = {
+  id: string;
+  username: string;
+  email: string;
+  image?: string;
+  lastMessage?: string;
+  unreadCount: number;
+  dateTime: Date;
+};
+
 class UserDao {
   async createUser(userData: IUser): Promise<returnedUser> {
     const salt = await bcrypt.genSalt(10);
@@ -66,6 +76,36 @@ class UserDao {
       ...userWithoutProps,
       id: _id,
     };
+  }
+
+  async getChatUsers(_id: IUser["_id"]): Promise<returnedChatUser[] | null> {
+    const user = await User.findById(_id)
+      .populate(
+        "chatUsers",
+        "id lastMessage unreadCount image user"
+      )
+      .populate([
+        {
+          path: "chatUsers",
+          populate: [{ path: "user" }],
+        },
+      ])
+      .exec();
+
+    if (!user) return null;
+    else {
+      const formatedChatUsers = user?.chatUsers.map((chatUser) => ({
+        id: chatUser._id.toString(),
+        username: chatUser.user.username,
+        email: chatUser.user.email,
+        image: chatUser.user.image,
+        lastMessage: chatUser.lastMessage,
+        unreadCount: chatUser.unreadCount,
+        dateTime: chatUser.dateTime,
+      }));
+
+      return formatedChatUsers;
+    }
   }
 }
 

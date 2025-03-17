@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { ChatUser } from "@/types";
-import { aviciiUser, chrisUser, idoUser, testUser } from "@/data/users";
 import { useUser } from "@/hooks/useUser";
 import { io } from "socket.io-client";
 import { useQuery } from "@tanstack/react-query";
-
-const SOCKET_SERVER_URL = "http://localhost:6567"; // I am lazy, this needs env
+import { API_ROUTES } from "@/axios/apiRoutes";
+import api from "@/axios/axios";
 
 const useChatUsers = () => {
   const [chatUsers, setChatUsers] = useState<ChatUser[]>([]);
@@ -14,7 +13,7 @@ const useChatUsers = () => {
   useEffect(() => {
     if (!user) return;
 
-    const socket = io(SOCKET_SERVER_URL);
+    const socket = io(import.meta.env.VITE_API_URL);
     socket.emit("join", { userId: user.id });
 
     socket.on(
@@ -40,38 +39,11 @@ const useChatUsers = () => {
     };
   }, [user]);
 
-  const fetchChatUsers = async (): Promise<ChatUser[] | null> => {
-    // TODO: Fetch chat users
-    // INPUT: none
-    // OUTPUT: chatUsers
-    // ERRORS: "User not found", "Unknow error"
-    return [
-      {
-        ...idoUser,
-        lastMessage: "Hey!",
-        unreadCount: 2,
-        dateTime: new Date(),
-      },
-      {
-        ...chrisUser,
-        lastMessage: "hello world",
-        unreadCount: 0,
-        dateTime: new Date(),
-      },
-      {
-        ...aviciiUser,
-        lastMessage: "fuck",
-        unreadCount: 5,
-        dateTime: new Date(),
-      },
-      {
-        ...testUser,
-        lastMessage:
-          "fucasdsadasdasdasdasdasdasdaadadsadadadasdasdasdasdadasdgdfgsdfgsdfgsdfsfdsfsfdsfdsfdsfdsfdsfdsfds",
-        unreadCount: 8,
-        dateTime: new Date(),
-      },
-    ];
+  const fetchChatUsers = async (): Promise<ChatUser[] | undefined> => {
+    if (user) {
+      const { data } = await api.get(`${API_ROUTES.users}/chat/${user?.id}`);
+      return data;
+    }
   };
 
   const { data, isLoading } = useQuery({
