@@ -94,7 +94,7 @@ class chatMessageDao {
         receiver: { $in: [userId, otherUserId] },
       })
         .skip(skip)
-        .limit(limit)
+        .limit(limit).sort({dateTime: -1})
         .exec();
 
       const parsedMessages = messages.map((message) => {
