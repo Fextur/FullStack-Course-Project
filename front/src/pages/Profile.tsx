@@ -67,9 +67,9 @@ const Profile = () => {
               width: "20%",
               minWidth: 200,
               maxWidth: 400,
-              color: "white",
-              "& .MuiInputBase-input": { color: "white" },
-              "& .MuiInputLabel-root": { color: "white" },
+              color: "black",
+              "& .MuiInputBase-input": { color: "black" },
+              "& .MuiInputLabel-root": { color: "black" },
             }}
           />
         ) : (

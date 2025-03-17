@@ -3,9 +3,12 @@ import { useUser } from "@/hooks/useUser";
 import { useNavigate } from "@tanstack/react-router";
 import { TextField, Button, Typography, Paper } from "@mui/material";
 import { User } from "lucide-react";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { useState } from "react";
 
 const Login = () => {
-  const { login, isLoggingIn, loginError } = useUser();
+  const [isGoogleErrorShown, setIsGoogleErrorShown] = useState(false);
+  const { login, isLoggingIn, loginError, loginGoogle } = useUser();
   const navigate = useNavigate();
 
   const form = useForm({
@@ -19,6 +22,15 @@ const Login = () => {
       });
     },
   });
+
+  const handleSuccessLogin = async (credentialResponse: CredentialResponse) => {
+    loginGoogle(
+      { credential: credentialResponse.credential },
+      {
+        onSuccess: () => navigate({ to: "/" }),
+      }
+    );
+  };
 
   return (
     <Paper
@@ -34,6 +46,11 @@ const Login = () => {
       </Typography>
 
       <form
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
         onSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
@@ -80,14 +97,25 @@ const Login = () => {
         </form.Field>
         {loginError && <Typography color="error">{loginError}</Typography>}
         <Button
+          loading={isLoggingIn}
           type="submit"
           variant="contained"
           fullWidth
           disabled={isLoggingIn}
-          sx={{ mt: 2 }}
+          sx={{ mt: 1, mb: 2 }}
         >
           {isLoggingIn ? "Logging in..." : "Login"}
         </Button>
+        <GoogleLogin
+          width={100}
+          onSuccess={handleSuccessLogin}
+          onError={() => setIsGoogleErrorShown(true)}
+        />
+        {isGoogleErrorShown && (
+          <Typography fontSize={15} color="error">
+            Error logging in via Google
+          </Typography>
+        )}
         <Button
           fullWidth
           variant="text"
