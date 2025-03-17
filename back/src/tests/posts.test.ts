@@ -4,6 +4,8 @@ import postModel from "../models/postModel";
 import userModel from "../models/userModel";
 import { mongoURI } from "../constants/config";
 import { server } from "../index";
+import fs from "fs";
+import path from "path";
 
 interface IUser {
   email: string;
@@ -22,6 +24,7 @@ const testUser: User = {
 };
 
 let postId = "";
+const filePath = path.join(__dirname, "test-post-image.jpg");
 
 beforeAll(async () => {
   await mongoose.connect(mongoURI);
@@ -34,10 +37,12 @@ beforeAll(async () => {
 
   testUser.token = res.body.accessToken;
   testUser._id = res.body.user.id;
+  fs.writeFileSync(filePath, "dummy content");
   expect(testUser.token).toBeDefined();
 });
 
 afterAll(async () => {
+  fs.unlinkSync(filePath);
   await postModel.deleteMany();
   await userModel.deleteMany();
 
@@ -58,17 +63,16 @@ describe("Posts Tests", () => {
     const response = await request(server)
       .post("/api/posts")
       .set("Authorization", `Bearer ${testUser.token}`)
-      .send({
-        content: "Test Content",
-        image: "Test image", // change to file later
-      });
+      .attach("image", filePath)
+      .field("content", "Test Content");
+
     expect(response.statusCode).toBe(201);
     expect(response.body.content).toBe("Test Content");
-    expect(response.body.image).toBe("Test image"); // change to file later
+    expect(response.body.image).toMatch(/media\/\d+\.\w+/);
     postId = response.body.id;
   });
 
-  test("Test get post by owner", async () => {
+  test("Test get post by user", async () => {
     const response = await request(server)
       .get(`/api/posts/${testUser._id}`)
       .set("Authorization", `Bearer ${testUser.token}`);
@@ -76,17 +80,16 @@ describe("Posts Tests", () => {
     expect(response.statusCode).toBe(200);
     expect(response.body.length).toBe(1);
     expect(response.body[0].content).toBe("Test Content");
-    expect(response.body[0].image).toBe("Test image");
+    expect(response.body[0].image).toMatch(/media\/\d+\.\w+/);
   });
 
   test("Test Create Post 2", async () => {
     const response = await request(server)
       .post("/api/posts")
       .set("Authorization", `Bearer ${testUser.token}`)
-      .send({
-        content: "Test Content 2",
-        image: "Test image 2", // change to file later
-      });
+      .attach("image", filePath)
+      .field("content", "Test Content 2");
+
     expect(response.statusCode).toBe(201);
   });
 
@@ -119,10 +122,9 @@ describe("Posts Tests", () => {
     const createResponse = await request(server)
       .post("/api/posts")
       .set("Authorization", `Bearer ${testUser.token}`)
-      .send({
-        content: "Initial Content",
-        image: "Initial Image",
-      });
+      .attach("image", filePath)
+      .field("content", "Initial Content");
+
     expect(createResponse.statusCode).toBe(201);
     const postIdToUpdate = createResponse.body.id;
 
@@ -131,22 +133,19 @@ describe("Posts Tests", () => {
       .set("Authorization", `Bearer ${testUser.token}`)
       .send({
         content: "Updated Content",
-        image: "Updated Image",
       });
 
     expect(updateResponse.statusCode).toBe(200);
     expect(updateResponse.body.content).toBe("Updated Content");
-    expect(updateResponse.body.image).toBe("Updated Image");
   });
 
   test("Test Like Post", async () => {
     const createResponse = await request(server)
       .post("/api/posts")
       .set("Authorization", `Bearer ${testUser.token}`)
-      .send({
-        content: "Content to Like",
-        image: "Image for Like",
-      });
+      .attach("image", filePath)
+      .field("content", "Content to Like");
+
     expect(createResponse.statusCode).toBe(201);
     const postIdToLike = createResponse.body.id;
 

@@ -5,6 +5,8 @@ import userModel from "../models/userModel";
 import commentModel from "../models/commentModel"; // Add the comment model
 import { mongoURI } from "../constants/config";
 import { server } from "../index";
+import fs from "fs";
+import path from "path";
 
 interface IUser {
   email: string;
@@ -22,6 +24,7 @@ const testUser: User = {
 };
 
 let postId = "";
+const filePath = path.join(__dirname, "test-post-image.jpg");
 
 beforeAll(async () => {
   await mongoose.connect(mongoURI);
@@ -36,14 +39,14 @@ beforeAll(async () => {
   testUser.token = res.body.accessToken;
   testUser._id = res.body.user.id;
   expect(testUser.token).toBeDefined();
+  fs.writeFileSync(filePath, "dummy content");
 
   const postResponse = await request(server)
     .post("/api/posts")
     .set("Authorization", `Bearer ${testUser.token}`)
-    .send({
-      content: "Test Post Content",
-      image: "Test image",
-    });
+    .attach("image", filePath)
+    .field("content", "Test image");
+
   expect(postResponse.statusCode).toBe(201);
   postId = postResponse.body.id;
 });
@@ -52,6 +55,8 @@ afterAll(async () => {
   await postModel.deleteMany();
   await userModel.deleteMany();
   await commentModel.deleteMany();
+
+  fs.unlinkSync(filePath);
 
   await mongoose.connection.close();
   server.close();
