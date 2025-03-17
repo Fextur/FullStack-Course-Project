@@ -32,7 +32,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/auth", authRoutes)
 app.use("/api/content", contentRoute);
-
+app.use("/api/media/", express.static("media"));
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
