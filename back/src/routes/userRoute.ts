@@ -214,6 +214,34 @@ router.post("/logout", logoutUser);
  *         description: Invalid or expired refresh token
  */
 router.post("/refreshToken", refreshToken);
+
+/**
+ * @swagger
+ * /users/{userId}:
+ *    get:
+ *     summary: Get a chat users by current user ID
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the current user
+ *     responses:
+ *       200:
+ *        description: Chat users found
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ *              items:
+ *                $ref: '#/components/schemas/returnedChatUser'
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
 router.get("/chat/:userId",authMiddleware, getChatUsers)
 
 export default router;

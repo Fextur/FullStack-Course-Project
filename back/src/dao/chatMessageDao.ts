@@ -4,6 +4,7 @@ import ChatUser from "../models/chatUser";
 import User from "../models/userModel";
 
 type returnedMessage = {
+  id: string;
   message: string;
   receiverId: string;
   senderId: string;
@@ -70,6 +71,7 @@ class chatMessageDao {
       await newMessage.save();
 
       return {
+        id: newMessage._id.toString(),
         message: newMessage.message,
         receiverId: newMessage.receiver._id,
         senderId: newMessage.sender._id,
@@ -86,7 +88,7 @@ class chatMessageDao {
     otherUserId: string,
     page: number,
     limit: number
-  ) {
+  ): Promise<returnedMessage[]> {
     try {
       const skip = (page - 1) * limit;
 

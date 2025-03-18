@@ -27,6 +27,7 @@ export type Post = {
 };
 
 export type ChatMessage = {
+  id: string;
   message: string;
   receiverId: string;
   senderId: string;

@@ -52,6 +52,79 @@
  *           username: "bob123"
  *           image: "http://localhost:3000/avatar.png"
  * 
+ *     returnedChatMessage:
+ *       type: object
+ *       required:
+ *         - id
+ *         - message
+ *         - receiverId
+ *         - senderId
+ *         - dateTime
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The unique ID of the chat message
+ *         receiverId:
+ *           type: string
+ *           description: The ID of the message receiver
+ *         senderId:
+ *           type: string
+ *           description: The ID of the message sender
+ *         dateTime:
+ *           type: string
+ *           description: The date and time of the sending
+ *       example:
+ *         id: "1"
+ *         receiverId: "1"
+ *         senderId: "2"
+ *         dateTime: "2025-03-18T17:28:18.917Z"
+ * 
+ *     returnedChatUser:
+ *      type: object
+ *      required:
+ *          - id
+ *          - userId
+ *          - username
+ *          - email
+ *          - lastMessage
+ *          - unreadCount
+ *          - dateTime
+ *      properties:
+ *          id:
+ *              type: string
+ *              description: The unique ID of the chat user
+ *          userId:
+ *              type: string
+ *              description: The unique ID of the user
+ *          email:
+ *              type: string
+ *              description: The user's email address
+ *          username:
+ *              type: string
+ *              description: The user's display name
+ *          image:
+ *              type: string
+ *              nullable: true
+ *              description: URL of the user's profile image
+ *          lastMessage:
+ *              type: string
+ *              description: The last message sent by the user
+ *          unreadCount:
+ *              type: number
+ *              description: Amount of unread messages from the user
+ *          dateTime:
+ *              type: string
+ *              description: The date and time of the last message
+ *      example:
+ *          id: "14"
+ *          userId: "1"
+ *          username: "bob"
+ *          email: "bob@gmail.com"
+ *          image: "http://localhost/media/bob.png"
+ *          lastMessage: "Hi"
+ *          unreadCount: 2
+ *          dateTime: "2025-03-18T17:28:18.917Z"
+ * 
  *     returnedPost:
  *       type: object
  *       required:
