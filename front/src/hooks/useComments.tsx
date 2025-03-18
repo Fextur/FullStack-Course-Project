@@ -6,7 +6,6 @@ import { API_ROUTES } from "@/axios/apiRoutes";
 const COMMENTS_PER_PAGE = 5;
 
 export const useComments = (postId: Post["id"]) => {
-  /// TODO: needs to be sure the refetch on addComment is working
 
   const fetchComments = async ({
     pageParam,

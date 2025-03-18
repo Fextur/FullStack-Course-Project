@@ -13,8 +13,10 @@ import {
   loginUser,
   logoutUser,
   refreshToken,
+  getChatUsers,
 } from "../controllers/userController";
 import { authMiddleware } from "../middlewares/authMiddleware";
+import { upload } from "../middlewares/upload";
 
 const router = Router();
 
@@ -62,7 +64,7 @@ const router = Router();
  *       500:
  *         description: An unexpected error occurred
  */
-router.post("/", createUser);
+router.post("/", upload.single("image"), createUser);
 
 /**
  * @swagger
@@ -135,7 +137,7 @@ router.get("/:userId", authMiddleware, getUser);
  *       500:
  *         description: Server error
  */
-router.put("/:userId", authMiddleware, updateUser);
+router.put("/:userId", authMiddleware, upload.single("image"), updateUser);
 
 /**
  * @swagger
@@ -212,5 +214,6 @@ router.post("/logout", logoutUser);
  *         description: Invalid or expired refresh token
  */
 router.post("/refreshToken", refreshToken);
+router.get("/chat/:userId",authMiddleware, getChatUsers)
 
 export default router;

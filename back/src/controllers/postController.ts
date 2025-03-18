@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import postDao from "../dao/postDao";
+import { BASE_URL } from "../constants/config";
 
 export const createPost = async (req: Request, res: Response) => {
   try {
-    const { content, image } = req.body;
+    const { content } = req.body;
+    const image = req.file ? `${BASE_URL}/media/${req.file.filename}` : "";
     const userId = req.params.currentUserId;
 
     const newPost = await postDao.createPost(userId, content, image);
@@ -20,8 +22,9 @@ export const createPost = async (req: Request, res: Response) => {
 export const updatePost = async (req: Request, res: Response) => {
   try {
     const { postId } = req.params;
+    const image = req.file ? `${BASE_URL}/media/${req.file.filename}` : "";
 
-    const updatedPost = await postDao.editPost(postId, req.body);
+    const updatedPost = await postDao.editPost(postId, { ...req.body, image });
     return res.status(200).json(updatedPost);
   } catch (error) {
     if (error instanceof Error) {

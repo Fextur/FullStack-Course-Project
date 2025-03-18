@@ -32,17 +32,22 @@ export const useProfile = (id: User["id"]) => {
   const updateUserProfile = async (
     id: User["id"],
     username: User["username"] | null,
-    image: User["image"] | null
+    image: File | null
   ): Promise<User | null> => {
     try {
       if (!user || user.id !== id) {
         throw new Error("You can only update your own profile.");
       }
+      const formData = new FormData();
 
-      const updatedUser = await api.put<User>(`${API_ROUTES.users}/${id}`, {
-        username: username || user.username,
-        image: image || user.image,
-      });
+      formData.append("username", username || user.username);
+
+      if (user?.image) formData.append("image", image || user?.image);
+
+      const updatedUser = await api.put<User>(
+        `${API_ROUTES.users}/${id}`,
+        formData
+      );
 
       return updatedUser.data;
     } catch (error) {
@@ -59,7 +64,7 @@ export const useProfile = (id: User["id"]) => {
     }: {
       id: User["id"];
       username: User["username"] | null;
-      image: User["image"] | null;
+      image: File | null;
     }) => updateUserProfile(id, username, image),
     onSuccess: (user) => {
       if (user) {

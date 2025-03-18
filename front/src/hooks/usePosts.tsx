@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
-import { Post, ReturnedMessage, User } from "@/types";
+import { Post, User } from "@/types";
 import api from "@/axios/axios";
 import { API_ROUTES } from "@/axios/apiRoutes";
 import { useNavigate } from "@tanstack/react-router";
@@ -25,12 +25,15 @@ export const usePosts = (userId?: User["id"]) => {
     }
   };
 
-  const createPost = async (content: string, image: string) => {
+  const createPost = async (content: string, image: File | null) => {
     try {
-      const { data } = await api.post<Post>(API_ROUTES.posts, {
-        content,
-        image,
-      });
+      const formData = new FormData();
+      formData.append("content", content);
+      if (image) {
+        formData.append("image", image);
+      }
+
+      const { data } = await api.post<Post>(API_ROUTES.posts, formData);
       return data;
     } catch (error) {
       console.error(error);
@@ -38,12 +41,22 @@ export const usePosts = (userId?: User["id"]) => {
     }
   };
 
-  const updatePost = async (postId: string, content: string, image: string) => {
+  const updatePost = async (
+    postId: string,
+    content: string,
+    image: File | null
+  ) => {
     try {
-      const { data } = await api.put<Post>(`${API_ROUTES.posts}/${postId}`, {
-        content,
-        image,
-      });
+      const formData = new FormData();
+      formData.append("content", content);
+      if (image) {
+        formData.append("image", image);
+      }
+
+      const { data } = await api.put<Post>(
+        `${API_ROUTES.posts}/${postId}`,
+        formData
+      );
       return data;
     } catch (error) {
       console.error(error);
@@ -51,18 +64,18 @@ export const usePosts = (userId?: User["id"]) => {
     }
   };
 
-  const deletePost = async(postId: string) =>{
+  const deletePost = async (postId: string) => {
     try {
-      const { data } = await api.delete<ReturnedMessage>(`${API_ROUTES.posts}/${postId}`);
+      const { data } = await api.delete<boolean>(`${API_ROUTES.posts}/${postId}`);
       return data;
     } catch (error) {
       console.error(error);
       throw new Error("An unexpected error occurred");
     }
-  }
+  };
 
   const createPostMutation = useMutation({
-    mutationFn: ({ content, image }: { content: string; image: string }) =>
+    mutationFn: ({ content, image }: { content: string; image: File | null }) =>
       createPost(content, image),
     onSuccess: () => {
       navigate({
@@ -79,7 +92,7 @@ export const usePosts = (userId?: User["id"]) => {
     }: {
       postId: string;
       content: string;
-      image: string;
+      image: File | null;
     }) => updatePost(postId, content, image),
     onSuccess: () => {
       navigate({
@@ -89,11 +102,7 @@ export const usePosts = (userId?: User["id"]) => {
   });
 
   const deletePostMutation = useMutation({
-    mutationFn: ({
-      postId,
-    }: {
-      postId: string;
-    }) => deletePost(postId),
+    mutationFn: ({ postId }: { postId: string }) => deletePost(postId),
     onSuccess: () => {
       navigate({
         to: "/",

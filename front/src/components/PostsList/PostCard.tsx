@@ -74,11 +74,11 @@ const PostCard = ({
         image={post.image}
       />
       <CardContent>
-        <Typography variant="body2" sx={{ direction: "rtl" }}>
+        <Typography variant="body2" >
           {post.content}
         </Typography>
       </CardContent>
-      <CardActions sx={{ direction: "rtl" }}>
+      <CardActions >
         <IconButton
           sx={{ outline: "none", "&:focus": { outline: "none" } }}
           onClick={() => !isUpdating && toggleLiked()}

@@ -14,6 +14,7 @@ import {
   removePost,
 } from "../controllers/postController";
 import { authMiddleware } from "../middlewares/authMiddleware";
+import { upload } from "../middlewares/upload";
 
 const router = express.Router();
 
@@ -57,7 +58,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/:currentUserId", authMiddleware, createPost);
+router.post("/", authMiddleware, upload.single("image"), createPost);
 
 /**
  * @swagger
@@ -96,7 +97,7 @@ router.post("/:currentUserId", authMiddleware, createPost);
  *       500:
  *         description: Server error
  */
-router.put("/:postId", authMiddleware, updatePost);
+router.put("/:postId", authMiddleware, upload.single("image"), updatePost);
 
 /**
  * @swagger
