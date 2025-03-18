@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import ChatMessage, { IChatMesaege } from "../models/chatMessage";
+import ChatMessage from "../models/chatMessage";
 import ChatUser from "../models/chatUser";
 import User from "../models/userModel";
 
