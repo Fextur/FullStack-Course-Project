@@ -6,6 +6,7 @@ import {
   loginUser,
   logoutUser,
   refreshToken,
+  getChatUsers,
 } from "../controllers/userController";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { upload } from "../middlewares/upload";
@@ -18,5 +19,6 @@ router.put("/:userId", authMiddleware, upload.single("image"), updateUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 router.post("/refreshToken", refreshToken);
+router.get("/chat/:userId",authMiddleware, getChatUsers)
 
 export default router;

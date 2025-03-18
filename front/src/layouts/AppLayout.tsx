@@ -48,16 +48,18 @@ const AppLayout = () => {
       >
         <Toolbar
           sx={{
-            width: "98%",
+            width: "100%",
             display: "flex",
             justifyContent: "space-between",
             gap: 2,
+            "&.MuiToolbar-root": { padding: 0 },
           }}
         >
           <div
             style={{
               display: "flex",
               gap: 15,
+              paddingLeft: "1vw",
             }}
           >
             <Button
@@ -98,50 +100,52 @@ const AppLayout = () => {
               New Post
             </Button>
           </div>
-          {user ? (
-            <>
-              <Avatar
-                src={user.image}
-                alt={user.username}
-                sx={{ width: 40, height: 40, marginRight: 2 }}
-                onClick={(e) => setAnchorEl(e.currentTarget)}
-                style={{ cursor: "pointer" }}
-              />
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={closeMenu}
+          <div style={{ paddingRight: "1vw" }}>
+            {user ? (
+              <>
+                <Avatar
+                  src={user.image}
+                  alt={user.username}
+                  sx={{ width: 40, height: 40, marginRight: 2 }}
+                  onClick={(e) => setAnchorEl(e.currentTarget)}
+                  style={{ cursor: "pointer" }}
+                />
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={closeMenu}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      navigate({
+                        to: `/profile`,
+                      });
+                      closeMenu();
+                    }}
+                  >
+                    Profile
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      logout();
+                      closeMenu();
+                    }}
+                  >
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <Button
+                component={Link}
+                to="/login"
+                sx={{ color: "white" }}
+                startIcon={<LogIn size={20} />}
               >
-                <MenuItem
-                  onClick={() => {
-                    navigate({
-                      to: `/profile`,
-                    });
-                    closeMenu();
-                  }}
-                >
-                  Profile
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    logout();
-                    closeMenu();
-                  }}
-                >
-                  Logout
-                </MenuItem>
-              </Menu>
-            </>
-          ) : (
-            <Button
-              component={Link}
-              to="/login"
-              sx={{ color: "white" }}
-              startIcon={<LogIn size={20} />}
-            >
-              Login
-            </Button>
-          )}
+                Login
+              </Button>
+            )}
+          </div>
         </Toolbar>
       </AppBar>
       {location.pathname !== "/login" && location.pathname !== "/" && (

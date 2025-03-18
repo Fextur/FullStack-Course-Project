@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
-import { Post, ReturnedMessage, User } from "@/types";
+import { Post, User } from "@/types";
 import api from "@/axios/axios";
 import { API_ROUTES } from "@/axios/apiRoutes";
 import { useNavigate } from "@tanstack/react-router";
@@ -66,9 +66,7 @@ export const usePosts = (userId?: User["id"]) => {
 
   const deletePost = async (postId: string) => {
     try {
-      const { data } = await api.delete<ReturnedMessage>(
-        `${API_ROUTES.posts}/${postId}`
-      );
+      const { data } = await api.delete<boolean>(`${API_ROUTES.posts}/${postId}`);
       return data;
     } catch (error) {
       console.error(error);

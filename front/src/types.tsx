@@ -26,8 +26,22 @@ export type Post = {
   commentsCount: number;
 };
 
-export type ReturnedMessage = {
+export type ChatMessage = {
   message: string;
+  receiverId: string;
+  senderId: string;
+  dateTime: Date;
+};
+
+export type ChatUser = {
+  id: string;
+  userId: string;
+  username: string;
+  email: string;
+  image?: string;
+  lastMessage?: string;
+  unreadCount: number;
+  dateTime: ChatMessage["dateTime"];
 };
 
 export enum ContentType {

@@ -1,4 +1,5 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
+import { IChatUser } from "./chatUser";
 
 export interface IUser extends Document {
   _id: string;
@@ -7,6 +8,7 @@ export interface IUser extends Document {
   password: string;
   image?: string;
   tokens?: string[];
+  chatUsers: IChatUser[]
 }
 
 const userSchema = new Schema(
@@ -16,6 +18,7 @@ const userSchema = new Schema(
     password: { type: String, required: true, unique: true },
     image: { type: String, default: "" },
     tokens: { type: [String], default: [] },
+    chatUsers: { type: [mongoose.Schema.Types.ObjectId], ref: "ChatUser", default: [] },
   },
   { collection: "Users" }
 );
