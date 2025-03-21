@@ -149,6 +149,36 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
+export const validateToken = async (req: Request, res: Response) => {
+  const { accessToken } = req.body;
+
+  if (!accessToken) {
+    return res.status(401).json({ message: "Access token is required" });
+  }
+
+  try {
+    const decoded = jwt.verify(accessToken, getToken()) as { _id: string };
+
+    const user = await User.findById(decoded._id);
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    res.json({
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        image: user.image,
+      },
+    });
+  } catch (error) {
+    console.error("Invalid or expired access token", error);
+    return res.status(403).json({ message: "Invalid or expired access token" });
+  }
+};
+
 export const logoutUser = async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
 
@@ -231,7 +261,7 @@ export const refreshToken = async (req: Request, res: Response) => {
 export const getChatUsers = async (req: Request, res: Response) => {
   try {
     const userId = req.params.currentUserId;
-    const chatUsers = await userDao.getChatUsers(userId);  
+    const chatUsers = await userDao.getChatUsers(userId);
 
     if (!chatUsers) res.status(404).json({ message: "User not found" });
 

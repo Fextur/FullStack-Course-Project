@@ -4,12 +4,25 @@ import { useNavigate } from "@tanstack/react-router";
 import { TextField, Button, Typography, Paper } from "@mui/material";
 import { User } from "lucide-react";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Login = () => {
   const [isGoogleErrorShown, setIsGoogleErrorShown] = useState(false);
-  const { login, isLoggingIn, loginError, loginGoogle } = useUser();
+  const { login, loginByToken, isLoggingIn, loginError, loginGoogle } =
+    useUser();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (accessToken) {
+      loginByToken(accessToken, {
+        onSuccess: () => navigate({ to: "/" }),
+      });
+    } else {
+      console.log("No access token found, prompting for login...");
+    }
+  }, []);
 
   const form = useForm({
     defaultValues: {
