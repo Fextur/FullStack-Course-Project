@@ -55,7 +55,8 @@ const AppLayout = () => {
             "&.MuiToolbar-root": { padding: 0 },
           }}
         >
-          <div
+
+          {user && (<div
             style={{
               display: "flex",
               gap: 15,
@@ -99,7 +100,7 @@ const AppLayout = () => {
             >
               New Post
             </Button>
-          </div>
+          </div>)}
           <div style={{ paddingRight: "1vw" }}>
             {user ? (
               <>
@@ -169,9 +170,7 @@ const AppLayout = () => {
       )}
       <div
         style={{
-          width: "100%",
-          height: "90vh",
-          overflow: "auto",
+          overflow:'hidden',
           padding: "16px 26px",
         }}
       >
