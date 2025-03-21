@@ -63,6 +63,8 @@ app.use("/api/content", contentRoute);
 app.use("/api/chatMessage", chatMessageRoutes);
 app.use("/api/media/", express.static("media"));
 
+app.use(express.static("front"));
+
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
