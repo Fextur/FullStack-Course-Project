@@ -162,10 +162,10 @@ export const validateToken = async (req: Request, res: Response) => {
     const user = await User.findById(decoded._id);
 
     if (!user) {
-      return res.status(401).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
-    res.json({
+    res.status(200).json({
       user: {
         id: user._id,
         username: user.username,
