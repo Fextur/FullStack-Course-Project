@@ -11,6 +11,7 @@ import {
   getUser,
   updateUser,
   loginUser,
+  validateToken,
   logoutUser,
   refreshToken,
   getChatUsers,
@@ -188,6 +189,34 @@ router.post("/login", loginUser);
  *        description: Invalid or expired token.
  */
 router.post("/logout", logoutUser);
+
+/**
+ * @swagger
+ * /users/validate-token:
+ *   post:
+ *     summary: Validate user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               content:
+ *                 accessToken: string
+ *     responses:
+ *       200:
+ *         description: Token is valid and user is found
+ *       401:
+ *        description: Access token is required
+ *       404:
+ *        description: User not found
+ *       403:
+ *        description: Invalid or expired access token
+ */
+router.post("/validate-token", validateToken);
+
 
 /**
  * @swagger
