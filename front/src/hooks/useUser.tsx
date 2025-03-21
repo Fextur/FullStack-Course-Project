@@ -14,10 +14,13 @@ export const useUser = () => {
 
   const login = async (username: User["username"], password: string) => {
     try {
-      const user = await api.post<UserWithToken>(`${API_ROUTES.users}/login`, {
-        username,
-        password,
-      });
+      const user = await api.post<UserWithToken>(
+        `${API_ROUTES.users}/loginUser`,
+        {
+          username,
+          password,
+        }
+      );
 
       localStorage.setItem("accessToken", user.data.accessToken);
 
@@ -95,7 +98,7 @@ export const useUser = () => {
 
   const logout = async () => {
     try {
-      await api.post<User>(`${API_ROUTES.users}/logout`);
+      await api.post<User>(`${API_ROUTES.users}/logoutUser`);
       localStorage.removeItem("accessToken");
       setUser(null);
     } catch (error) {

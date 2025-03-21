@@ -39,10 +39,12 @@ beforeAll(async () => {
 
   userId = createUserResponse.body.user.id;
 
-  const loginResponse = await request(server).post("/api/users/login").send({
-    username: testUser.username,
-    password: testUser.password,
-  });
+  const loginResponse = await request(server)
+    .post("/api/users/loginUser")
+    .send({
+      username: testUser.username,
+      password: testUser.password,
+    });
   authToken = loginResponse.body.accessToken;
 
   expect(authToken).toBeDefined();
@@ -97,7 +99,7 @@ describe("User Routes Tests", () => {
   });
 
   test("Login User", async () => {
-    const response = await request(server).post("/api/users/login").send({
+    const response = await request(server).post("/api/users/loginUser").send({
       username: testUser.username,
       password: testUser.password,
     });
@@ -108,7 +110,7 @@ describe("User Routes Tests", () => {
 
   test("Logout User", async () => {
     const response = await request(server)
-      .post("/api/users/logout")
+      .post("/api/users/logoutUser")
       .set("Cookie", `refreshToken=${refreshToken}`);
 
     expect(response.statusCode).toBe(200);
