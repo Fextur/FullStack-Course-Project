@@ -28,9 +28,24 @@ export const useUser = () => {
     }
   };
 
+  const loginByToken = async (token: string) => {
+    try {
+      const response = await api.post(`${API_ROUTES.users}/validate-token`, {
+        accessToken: token,
+      });
+
+      return response.data.user;
+    } catch (error) {
+      console.error("Invalid credentials ", error);
+      throw error;
+    }
+  };
+
   const googleLogin = async (credential: CredentialResponse["credential"]) => {
     try {
-      const {data} = await api.post(`${API_ROUTES.auth}/google`, {credential})
+      const { data } = await api.post(`${API_ROUTES.auth}/google`, {
+        credential,
+      });
       localStorage.setItem("accessToken", data.accessToken);
 
       return data.user;
@@ -39,6 +54,15 @@ export const useUser = () => {
       throw error;
     }
   };
+
+  const loginByTokenMutation = useMutation({
+    mutationFn: (token: string) => loginByToken(token),
+    onSuccess: (user) => {
+      if (user) {
+        setUser({ ...user, image: user.image || DEFAULT_USER_IMAGE });
+      }
+    },
+  });
 
   const loginMutation = useMutation({
     mutationFn: ({
@@ -51,7 +75,6 @@ export const useUser = () => {
     onSuccess: (user) => {
       if (user) {
         console.log(user);
-        
         setUser({ ...user, image: user.image || DEFAULT_USER_IMAGE });
       }
     },
@@ -67,7 +90,6 @@ export const useUser = () => {
       if (user) {
         setUser({ ...user, image: user.image || DEFAULT_USER_IMAGE });
       }
-      
     },
   });
 
@@ -86,6 +108,7 @@ export const useUser = () => {
     user,
     loginGoogle: googleLoginMutation.mutate,
     login: loginMutation.mutate,
+    loginByToken: loginByTokenMutation.mutate,
     logout,
     isLoggingIn: loginMutation.isPending,
     loginError: loginMutation.error ? loginMutation.error.message : null,
