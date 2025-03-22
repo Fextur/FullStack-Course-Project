@@ -4,6 +4,7 @@ import { useRecoilState } from "recoil";
 import { userAtom } from "@/atoms";
 import api from "@/axios/axios";
 import { API_ROUTES } from "@/axios/apiRoutes";
+import { AxiosError } from "axios";
 
 export const useProfile = (id: User["id"]) => {
   const [user, setUser] = useRecoilState(userAtom);
@@ -50,8 +51,13 @@ export const useProfile = (id: User["id"]) => {
       );
 
       return updatedUser.data;
-    } catch (error) {
-      console.error("Error fetching user ", error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response) {
+        const { message } = error.response.data;
+        console.error("Error creating user:", message);
+        throw new Error(message);
+      }
+      console.error("Error creating user:", error);
       throw error;
     }
   };
