@@ -33,7 +33,7 @@ beforeAll(async () => {
   await userModel.deleteMany();
 
   await request(server).post("/api/users/").send(testUser);
-  const res = await request(server).post("/api/users/login").send(testUser);
+  const res = await request(server).post("/api/users/loginUser").send(testUser);
 
   testUser.token = res.body.accessToken;
   testUser._id = res.body.user.id;

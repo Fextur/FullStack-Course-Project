@@ -3,6 +3,7 @@ import  swaggerJsDoc  from 'swagger-jsdoc';
 import { SocketServise } from "./socketService";
 import express from "express";
 import http from "http";
+import https from "https";
 import mongoose from "mongoose";
 import cors from "cors";
 import { CLIENT_URL, mongoURI, PORT } from "./constants/config";
@@ -14,10 +15,22 @@ import authRoutes from "./routes/authRoute";
 import contentRoute from "./routes/contentRoute";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
+import fs from "fs";
 
 
 const app = express();
-const server = http.createServer(app);
+let server: http.Server;
+
+if (process.env.NODE_ENV !== "production") {
+  server = http.createServer(app);
+} else {
+  const options = {
+    key: fs.readFileSync("../client-key.pem"),
+    cert: fs.readFileSync("../client-cert.pem"),
+  };
+  server = https.createServer(options, app);
+}
+
 const io = new Server(server, {
   cors: {
     origin: "*", // Allow all origins for now (Change in production)
@@ -69,6 +82,8 @@ if (process.env.NODE_ENV === "development") {
   const specs = swaggerJsDoc(options);
   app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 }
+
+app.use(express.static("front"));
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -76,7 +76,10 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const image = req.file ? `${BASE_URL}/media/${req.file.filename}` : "";
+    const image = req.file
+      ? `${BASE_URL}/media/${req.file.filename}`
+      : req.body.image;
+
     const updatedUser = await userDao.updateUserById(req.params.currentUserId, {
       ...req.body,
       image,
@@ -88,9 +91,11 @@ export const updateUser = async (req: Request, res: Response) => {
     }
   } catch (error) {
     if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "An unknown error occurred" });
+      if (error.name === "MongoServerError") {
+        if (error.message.includes("username")) {
+          return res.status(400).json({ message: "Username is already taken" });
+        }
+      }
     }
   }
 };

@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import api from "@/axios/axios";
 import { API_ROUTES } from "@/axios/apiRoutes";
 import { CredentialResponse } from "@react-oauth/google";
+import { AxiosError } from "axios";
 
 export const DEFAULT_USER_IMAGE =
   "https://static.vecteezy.com/system/resources/thumbnails/001/840/618/small/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg";
@@ -14,16 +15,24 @@ export const useUser = () => {
 
   const login = async (username: User["username"], password: string) => {
     try {
-      const user = await api.post<UserWithToken>(`${API_ROUTES.users}/login`, {
-        username,
-        password,
-      });
+      const user = await api.post<UserWithToken>(
+        `${API_ROUTES.users}/loginUser`,
+        {
+          username,
+          password,
+        }
+      );
 
       localStorage.setItem("accessToken", user.data.accessToken);
 
       return user.data.user;
-    } catch (error) {
-      console.error("Invalid credentials ", error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response) {
+        const { message } = error.response.data;
+        console.error("Error creating user:", message);
+        throw new Error(message);
+      }
+      console.error("Error creating user:", error);
       throw error;
     }
   };
@@ -35,8 +44,13 @@ export const useUser = () => {
       });
 
       return response.data.user;
-    } catch (error) {
-      console.error("Invalid credentials ", error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response) {
+        const { message } = error.response.data;
+        console.error("Error creating user:", message);
+        throw new Error(message);
+      }
+      console.error("Error creating user:", error);
       throw error;
     }
   };
@@ -95,7 +109,7 @@ export const useUser = () => {
 
   const logout = async () => {
     try {
-      await api.post<User>(`${API_ROUTES.users}/logout`);
+      await api.post<User>(`${API_ROUTES.users}/logoutUser`);
       localStorage.removeItem("accessToken");
       setUser(null);
     } catch (error) {

@@ -39,7 +39,7 @@ export const handleGoogleAuth = async (req: Request, res: Response) => {
           path: "/",
         });
 
-        res.json({
+        res.status(200).json({
           accessToken,
           user: {
             id: user._id,
