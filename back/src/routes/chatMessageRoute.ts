@@ -16,17 +16,10 @@ const router = express.Router();
 
 /**
  * @swagger
- * /chatMessage/{currentUserId}:
+ * /chatMessage:
  *   post:
  *     summary: Create a new chatMessage
  *     tags: [ChatMessages]
- *     parameters:
- *       - in: path
- *         name: currentUserId
- *         schema:
- *           type: string
- *         required: true
- *         description: ID of the user creating the chat message
  *     requestBody:
  *       required: true
  *       content:
@@ -52,17 +45,11 @@ router.post("/", authMiddleware, createMessage);
 
 /**
  * @swagger
- * /chatMessage/{currentUserId}/{otherUserId}:
+ * /chatMessage/{otherUserId}:
  *   get:
  *     summary: Get messages for a chat
  *     tags: [ChatMessages]
  *     parameters:
- *       - in: path
- *         name: currentUserId
- *         schema:
- *           type: string
- *         required: true
- *         description: ID of the user
  *       - in: path
  *         name: otherUserId
  *         schema:

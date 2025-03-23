@@ -20,17 +20,10 @@ const router = express.Router();
 
 /**
  * @swagger
- * /posts/{currentUserId}:
+ * /posts:
  *   post:
  *     summary: Create a new post
  *     tags: [Posts]
- *     parameters:
- *       - in: path
- *         name: currentUserId
- *         schema:
- *           type: string
- *         required: true
- *         description: ID of the user creating the post
  *     requestBody:
  *       required: true
  *       content:
@@ -128,7 +121,7 @@ router.delete("/:postId", authMiddleware, removePost);
 
 /**
  * @swagger
- * /posts/like/{postId}/{currentUserId}:
+ * /posts/like/{postId}:
  *   post:
  *     summary: Like or unlike a post
  *     tags: [Posts]
@@ -139,12 +132,6 @@ router.delete("/:postId", authMiddleware, removePost);
  *           type: string
  *         required: true
  *         description: ID of the post to like/unlike
- *       - in: path
- *         name: currentUserId
- *         schema:
- *           type: string
- *         required: true
- *         description: ID of the user performing like/unlike
  *     responses:
  *       200:
  *         description: Like/unlike toggled successfully
@@ -160,7 +147,7 @@ router.delete("/:postId", authMiddleware, removePost);
  *       500:
  *         description: Server error
  */
-router.post("/like/:postId/:currentUserId", authMiddleware, toggleLikePost);
+router.post("/like/:postId", authMiddleware, toggleLikePost);
 
 /**
  * @swagger
@@ -169,6 +156,12 @@ router.post("/like/:postId/:currentUserId", authMiddleware, toggleLikePost);
  *     summary: Get list of posts
  *     tags: [Posts]
  *     parameters:
+ *       - in: path
+ *         name: filterUserId
+ *         description: Optional user ID to filter posts by a specific user.
+ *         required: false
+ *         schema:
+ *           type: string
  *       - in: query
  *         name: page
  *         schema:

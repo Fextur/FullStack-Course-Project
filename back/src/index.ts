@@ -1,5 +1,5 @@
-import  swaggerUI  from 'swagger-ui-express';
-import  swaggerJsDoc  from 'swagger-jsdoc';
+import swaggerUI from "swagger-ui-express";
+import swaggerJsDoc from "swagger-jsdoc";
 import { SocketServise } from "./socketService";
 import express from "express";
 import http from "http";
@@ -16,7 +16,6 @@ import contentRoute from "./routes/contentRoute";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 import fs from "fs";
-
 
 const app = express();
 let server: http.Server;
@@ -75,7 +74,21 @@ if (process.env.NODE_ENV === "development") {
         version: "1.0.0",
         description: "REST server including authentication using JWT",
       },
-      servers: [{ url: "http://localhost:3000" }],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
+          },
+        },
+      },
+      security: [
+        {
+          bearerAuth: [],
+        },
+      ],
+      servers: [{ url: "http://localhost:3000/api" }],
     },
     apis: ["./src/routes/*.ts", "./src/swaggerDef.ts"],
   };

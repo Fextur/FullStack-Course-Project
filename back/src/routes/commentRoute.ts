@@ -13,17 +13,10 @@ const router = express.Router();
 
 /**
  * @swagger
- * /comments/{currentUserId}:
+ * /comments:
  *   post:
  *     summary: Create a new comment
  *     tags: [Comments]
- *     parameters:
- *       - in: path
- *         name: currentUserId
- *         schema:
- *           type: string
- *         required: true
- *         description: ID of the user creating the comment
  *     requestBody:
  *       required: true
  *       content:

@@ -25,11 +25,11 @@ const router = express.Router();
  *             properties:
  *               contentType:
  *                 type: string
- *                 description: The type of content to generate
+ *                 description: The content to generate
  *             required:
  *               - contentType
  *             example:
- *               contentType: "joke"
+ *               contentType: "Tell a funny short joke."
  *     responses:
  *       201:
  *         description: Successfully generated content
