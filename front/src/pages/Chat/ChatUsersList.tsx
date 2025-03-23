@@ -9,7 +9,11 @@ interface IChatUsersListProps {
 }
 
 const ChatUsersList = (props: IChatUsersListProps) => {
-  const { chatUsers, clearUnreadCount, isLoading } = useChatUsers();
+  const { chatUsers, clearUnreadCount, isLoading, refetch } = useChatUsers();
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   useEffect(() => {
     if (
@@ -33,14 +37,13 @@ const ChatUsersList = (props: IChatUsersListProps) => {
       <Loader isLoading={isLoading} />
       <List>
         {chatUsers
-          .sort((a, b) => b.dateTime.getTime() - a.dateTime.getTime())
           .map((chatUser) => (
-            <ChatUserItem
-              key={chatUser.userId}
-              chatUser={chatUser}
-              isSelected={chatUser.userId === props.selectedUserId}
-            />
-          ))}
+          <ChatUserItem
+            key={chatUser.userId}
+            chatUser={chatUser}
+            isSelected={chatUser.userId === props.selectedUserId}
+          />
+        ))}
       </List>
     </Paper>
   );

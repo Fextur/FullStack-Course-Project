@@ -46,14 +46,14 @@ const useChatUsers = () => {
     }
   };
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["profile"],
     queryFn: () => fetchChatUsers(),
     staleTime: Infinity,
   });
 
   useEffect(() => {
-    if (data) setChatUsers(data);
+    if (data) setChatUsers(data);    
   }, [data]);
 
   const clearUnreadCount = (selectedUserId: ChatUser["id"]) => {
@@ -69,7 +69,7 @@ const useChatUsers = () => {
     );
   };
 
-  return { chatUsers, clearUnreadCount, isLoading };
+  return { chatUsers, clearUnreadCount, isLoading, refetch };
 };
 
 export default useChatUsers;

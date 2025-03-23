@@ -41,7 +41,7 @@ class chatMessageDao {
       if (!existingChatUser) {
         const recieverChatUser = new ChatUser({
           lastMessage: "",
-          unreadCount: 1,
+          unreadCount: 0,
           user: receiver,
         });
 
@@ -91,7 +91,10 @@ class chatMessageDao {
       const skip = (page - 1) * limit;
 
       const messages = await ChatMessage.find({
-        receiver: { $in: [userId, otherUserId] },
+        $or: [
+          { receiver: userId, sender: otherUserId },
+          { receiver: otherUserId, sender: userId }
+        ]
       })
         .skip(skip)
         .limit(limit).sort({dateTime: -1})
