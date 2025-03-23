@@ -22,7 +22,9 @@ export const createPost = async (req: Request, res: Response) => {
 export const updatePost = async (req: Request, res: Response) => {
   try {
     const { postId } = req.params;
-    const image = req.file ? `${BASE_URL}/media/${req.file.filename}` : "";
+    const image = req.file
+      ? `${BASE_URL}/media/${req.file.filename}`
+      : req.body.image;
 
     const updatedPost = await postDao.editPost(postId, { ...req.body, image });
     return res.status(200).json(updatedPost);

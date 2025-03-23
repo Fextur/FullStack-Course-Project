@@ -4,6 +4,7 @@ import { useSetRecoilState } from "recoil";
 import { userAtom } from "@/atoms";
 import api from "@/axios/axios";
 import { API_ROUTES } from "@/axios/apiRoutes";
+import { AxiosError } from "axios";
 
 export const useRegister = () => {
   const setUser = useSetRecoilState(userAtom);
@@ -28,7 +29,12 @@ export const useRegister = () => {
       localStorage.setItem("accessToken", user.data.accessToken);
 
       return user.data.user;
-    } catch (error) {
+    } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response) {
+        const { message } = error.response.data;
+        console.error("Error creating user:", message);
+        throw new Error(message);
+      }
       console.error("Error creating user:", error);
       throw error;
     }
