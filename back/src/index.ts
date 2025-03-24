@@ -87,7 +87,10 @@ const options = {
         bearerAuth: [],
       },
     ],
-    servers: [{ url: "http://localhost:3000/api" }],
+    servers: [
+      { url: "http://localhost:3000/api" },
+      { url: "https://node105.cs.colman.ac.il/api" },
+    ],
   },
   apis: ["./src/routes/*.ts", "./src/swaggerDef.ts"],
 };
