@@ -1,3 +1,5 @@
+import swaggerUI from "swagger-ui-express";
+import swaggerJsDoc from "swagger-jsdoc";
 import { SocketServise } from "./socketService";
 import express from "express";
 import http from "http";
@@ -62,6 +64,35 @@ app.use("/api/auth", authRoutes);
 app.use("/api/content", contentRoute);
 app.use("/api/chatMessage", chatMessageRoutes);
 app.use("/api/media/", express.static("media"));
+
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "full stack REST API",
+      version: "1.0.0",
+      description: "REST server including authentication using JWT",
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+    servers: [{ url: "http://localhost:3000/api" }],
+  },
+  apis: ["./src/routes/*.ts", "./src/swaggerDef.ts"],
+};
+const specs = swaggerJsDoc(options);
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 app.use(express.static("front"));
 

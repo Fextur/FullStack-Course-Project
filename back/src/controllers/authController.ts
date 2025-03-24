@@ -78,6 +78,10 @@ export const handleGoogleAuth = async (req: Request, res: Response) => {
       }
     }
   } catch (err) {
-    return res.status(400).send(err);
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    } else {
+      res.status(500).json({ message: "An unknown error occurred" });
+    }
   }
 };

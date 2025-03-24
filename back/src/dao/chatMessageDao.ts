@@ -4,6 +4,7 @@ import ChatUser from "../models/chatUser";
 import User from "../models/userModel";
 
 type returnedMessage = {
+  id: string;
   message: string;
   receiverId: string;
   senderId: string;
@@ -70,6 +71,7 @@ class chatMessageDao {
       await newMessage.save();
 
       return {
+        id: newMessage._id.toString(),
         message: newMessage.message,
         receiverId: newMessage.receiver._id,
         senderId: newMessage.sender._id,
@@ -86,18 +88,19 @@ class chatMessageDao {
     otherUserId: string,
     page: number,
     limit: number
-  ) {
+  ): Promise<returnedMessage[]> {
     try {
       const skip = (page - 1) * limit;
 
       const messages = await ChatMessage.find({
         $or: [
           { receiver: userId, sender: otherUserId },
-          { receiver: otherUserId, sender: userId }
-        ]
+          { receiver: otherUserId, sender: userId },
+        ],
       })
         .skip(skip)
-        .limit(limit).sort({dateTime: -1})
+        .limit(limit)
+        .sort({ dateTime: -1 })
         .exec();
 
       const parsedMessages = messages.map((message) => {
@@ -106,7 +109,7 @@ class chatMessageDao {
           message: message.message,
           receiverId: message.receiver._id,
           senderId: message.sender._id,
-          dateTime: message.dateTime
+          dateTime: message.dateTime,
         };
       });
 

@@ -23,13 +23,13 @@ export const getComments = async (req: Request, res: Response) => {
 
     const postId = req.params.postId;
 
-    const posts = await commentDao.getCommentsByPost(
+    const comments = await commentDao.getCommentsByPost(
       Number(page),
       Number(limit),
       postId
     );
 
-    return res.status(200).json(posts);
+    return res.status(200).json(comments);
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ message: error.message });

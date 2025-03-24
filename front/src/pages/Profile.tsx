@@ -43,6 +43,7 @@ const Profile = () => {
     if (!id && user) {
       navigate({
         to: `/profile/${user.id}`,
+        replace: true,
       });
     }
   }, [user, id, navigate]);
