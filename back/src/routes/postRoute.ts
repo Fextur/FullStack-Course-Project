@@ -186,6 +186,6 @@ router.post("/like/:postId", authMiddleware, toggleLikePost);
  *       500:
  *         description: Server error
  */
-router.get("/", authMiddleware, getPosts);
+router.get("/:userId?", authMiddleware, getPosts);
 
 export default router;

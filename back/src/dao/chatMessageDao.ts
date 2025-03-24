@@ -95,11 +95,12 @@ class chatMessageDao {
       const messages = await ChatMessage.find({
         $or: [
           { receiver: userId, sender: otherUserId },
-          { receiver: otherUserId, sender: userId }
-        ]
+          { receiver: otherUserId, sender: userId },
+        ],
       })
         .skip(skip)
-        .limit(limit).sort({dateTime: -1})
+        .limit(limit)
+        .sort({ dateTime: -1 })
         .exec();
 
       const parsedMessages = messages.map((message) => {
@@ -108,7 +109,7 @@ class chatMessageDao {
           message: message.message,
           receiverId: message.receiver._id,
           senderId: message.sender._id,
-          dateTime: message.dateTime
+          dateTime: message.dateTime,
         };
       });
 

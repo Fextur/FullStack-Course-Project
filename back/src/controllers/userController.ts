@@ -179,7 +179,6 @@ export const validateToken = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error("Invalid or expired access token", error);
     return res.status(403).json({ message: "Invalid or expired access token" });
   }
 };

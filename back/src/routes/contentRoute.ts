@@ -4,6 +4,7 @@
  *   name: Content
  *   description: The Content API
  */
+
 import express from "express";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { generateContent } from "../controllers/contentController";

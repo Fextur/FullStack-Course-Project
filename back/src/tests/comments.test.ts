@@ -97,4 +97,73 @@ describe("Comment Tests", () => {
 
     expect(response.statusCode).toBe(500);
   });
+
+  test("Test Create Comment Fail (Invalid Token)", async () => {
+    const response = await request(server)
+      .post("/api/comments")
+      .set("Authorization", "Bearer invalidToken")
+      .send({
+        content: "This is a comment with invalid token",
+        postId,
+      });
+
+    expect(response.statusCode).toBe(403);
+    expect(response.body.message).toBe("Invalid or expired token.");
+  });
+
+  test("Test Get Comments by Post Fail (Invalid Post ID)", async () => {
+    const invalidPostId = "invalidPostId";
+
+    const response = await request(server)
+      .get(`/api/comments/${invalidPostId}`)
+      .set("Authorization", `Bearer ${testUser.token}`);
+
+    expect(response.statusCode).toBe(500);
+    expect(response.body.message).toBe("Error getting comments");
+  });
+
+  test("Test Create Comment Fail (Missing PostId)", async () => {
+    const response = await request(server)
+      .post("/api/comments")
+      .set("Authorization", `Bearer ${testUser.token}`)
+      .send({
+        content: "This is a comment without postId",
+      });
+
+    expect(response.statusCode).toBe(201);
+  });
+
+  test("Test Create Comment Fail (User Not Logged In)", async () => {
+    const response = await request(server).post("/api/comments").send({
+      content: "This is a comment while not logged in",
+      postId,
+    });
+
+    expect(response.statusCode).toBe(401);
+    expect(response.body.message).toBe("Access denied. No token provided.");
+  });
+
+  test("Test Create Comment with Long Content", async () => {
+    const longContent = "A".repeat(1000);
+
+    const response = await request(server)
+      .post("/api/comments")
+      .set("Authorization", `Bearer ${testUser.token}`)
+      .send({
+        content: longContent,
+        postId,
+      });
+
+    expect(response.statusCode).toBe(201);
+    expect(response.body.content).toBe(longContent);
+  });
+
+  test("Test Get Comments Paginated", async () => {
+    const response = await request(server)
+      .get(`/api/comments/${postId}?page=1&limit=2`)
+      .set("Authorization", `Bearer ${testUser.token}`);
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body.length).toBeLessThanOrEqual(2);
+  });
 });

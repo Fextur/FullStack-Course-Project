@@ -142,7 +142,7 @@ router.put("/:userId", authMiddleware, upload.single("image"), updateUser);
 
 /**
  * @swagger
- * /users/login:
+ * /users/loginUser:
  *   post:
  *     summary: Login user
  *     tags: [Users]
@@ -172,11 +172,11 @@ router.put("/:userId", authMiddleware, upload.single("image"), updateUser);
  *       401:
  *         description: Invalid username or password
  */
-router.post("/login", loginUser);
+router.post("/loginUser", loginUser);
 
 /**
  * @swagger
- * /users/logout:
+ * /users/logoutUser:
  *   post:
  *     summary: Logout user
  *     tags: [Users]
@@ -188,7 +188,7 @@ router.post("/login", loginUser);
  *       403:
  *        description: Invalid or expired token.
  */
-router.post("/logout", logoutUser);
+router.post("/logoutUser", logoutUser);
 
 /**
  * @swagger
@@ -216,7 +216,6 @@ router.post("/logout", logoutUser);
  *        description: Invalid or expired access token
  */
 router.post("/validate-token", validateToken);
-
 
 /**
  * @swagger
@@ -271,6 +270,6 @@ router.post("/refreshToken", refreshToken);
  *       500:
  *         description: Server error
  */
-router.get("/chat/:userId",authMiddleware, getChatUsers)
+router.get("/chat/:userId", authMiddleware, getChatUsers);
 
 export default router;

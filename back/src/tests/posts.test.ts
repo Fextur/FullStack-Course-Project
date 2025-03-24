@@ -59,6 +59,15 @@ describe("Posts Tests", () => {
     expect(response.body.length).toBe(0);
   });
 
+  test("Test Get Posts By User With No Posts", async () => {
+    const response = await request(server)
+      .get(`/api/posts/${testUser._id}`)
+      .set("Authorization", `Bearer ${testUser.token}`);
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body.length).toBe(0);
+  });
+
   test("Test Create Post", async () => {
     const response = await request(server)
       .post("/api/posts")
@@ -108,7 +117,17 @@ describe("Posts Tests", () => {
     expect(response.statusCode).toBe(200);
   });
 
-  test("Test Create Post fail", async () => {
+  test("Test Create Post Fail (Missing Content)", async () => {
+    const response = await request(server)
+      .post("/api/posts")
+      .set("Authorization", `Bearer ${testUser.token}`)
+      .attach("image", filePath);
+
+    expect(response.statusCode).toBe(500);
+    expect(response.body.message).toBe("Error creating post");
+  });
+
+  test("Test Create Post fail (Missing Image)", async () => {
     const response = await request(server)
       .post("/api/posts")
       .set("Authorization", `Bearer ${testUser.token}`)
@@ -162,5 +181,80 @@ describe("Posts Tests", () => {
 
     expect(unlikeResponse.statusCode).toBe(200);
     expect(unlikeResponse.body.isUserLiked).toBe(false);
+  });
+
+  test("Test Get Posts Paginated", async () => {
+    await request(server)
+      .post("/api/posts")
+      .set("Authorization", `Bearer ${testUser.token}`)
+      .attach("image", filePath)
+      .field("content", "Post 1");
+    await request(server)
+      .post("/api/posts")
+      .set("Authorization", `Bearer ${testUser.token}`)
+      .attach("image", filePath)
+      .field("content", "Post 2");
+
+    const response = await request(server)
+      .get("/api/posts?page=1&limit=1")
+      .set("Authorization", `Bearer ${testUser.token}`);
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body.length).toBe(1);
+  });
+
+  test("Test Get Posts By User With Pagination", async () => {
+    const response = await request(server)
+      .get(`/api/posts/${testUser._id}?page=1&limit=1`)
+      .set("Authorization", `Bearer ${testUser.token}`);
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body.length).toBe(1);
+    expect(response.body[0].content).toBe("Test Content 2");
+  });
+
+  test("Test Remove Post Fail (Non-existent Post ID)", async () => {
+    const nonExistentPostId = "60d5f4d1e4b0f2db7f8d5c72"; // Random non-existent post ID
+
+    const response = await request(server)
+      .delete(`/api/posts/${nonExistentPostId}`)
+      .set("Authorization", `Bearer ${testUser.token}`);
+
+    expect(response.statusCode).toBe(500);
+    expect(response.body.message).toBe("Post not found");
+  });
+
+  test("Test Like Post (Already Liked)", async () => {
+    const createResponse = await request(server)
+      .post("/api/posts")
+      .set("Authorization", `Bearer ${testUser.token}`)
+      .attach("image", filePath)
+      .field("content", "Post to Like");
+
+    const postIdToLike = createResponse.body.id;
+
+    await request(server)
+      .post(`/api/posts/like/${postIdToLike}`)
+      .set("Authorization", `Bearer ${testUser.token}`);
+
+    const likeResponse = await request(server)
+      .post(`/api/posts/like/${postIdToLike}`)
+      .set("Authorization", `Bearer ${testUser.token}`);
+
+    expect(likeResponse.statusCode).toBe(200);
+    expect(likeResponse.body.isUserLiked).toBe(false);
+  });
+
+  test("Test Post Update Fail (Invalid Post ID)", async () => {
+    const invalidPostId = "invalidPostId";
+
+    const response = await request(server)
+      .put(`/api/posts/${invalidPostId}`)
+      .set("Authorization", `Bearer ${testUser.token}`)
+      .send({
+        content: "Updated Content for invalid post",
+      });
+
+    expect(response.statusCode).toBe(500);
   });
 });

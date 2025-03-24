@@ -76,7 +76,6 @@ class CommentDao {
 
       return parsedComments;
     } catch (error) {
-      console.error(error);
       throw new Error("Error getting comments");
     }
   }

@@ -65,40 +65,38 @@ app.use("/api/content", contentRoute);
 app.use("/api/chatMessage", chatMessageRoutes);
 app.use("/api/media/", express.static("media"));
 
-if (process.env.NODE_ENV === "development") {
-  const options = {
-    definition: {
-      openapi: "3.0.0",
-      info: {
-        title: "full stack REST API",
-        version: "1.0.0",
-        description: "REST server including authentication using JWT",
-      },
-      components: {
-        securitySchemes: {
-          bearerAuth: {
-            type: "http",
-            scheme: "bearer",
-            bearerFormat: "JWT",
-          },
-        },
-      },
-      security: [
-        {
-          bearerAuth: [],
-        },
-      ],
-      servers: [{ url: "http://localhost:3000/api" }],
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "full stack REST API",
+      version: "1.0.0",
+      description: "REST server including authentication using JWT",
     },
-    apis: ["./src/routes/*.ts", "./src/swaggerDef.ts"],
-  };
-  const specs = swaggerJsDoc(options);
-  app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
-}
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+    servers: [{ url: "http://localhost:3000/api" }],
+  },
+  apis: ["./src/routes/*.ts", "./src/swaggerDef.ts"],
+};
+const specs = swaggerJsDoc(options);
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 app.use(express.static("front"));
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 

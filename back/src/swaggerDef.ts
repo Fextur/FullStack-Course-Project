@@ -27,7 +27,7 @@
  *         email: "bob@gmail.com"
  *         username: "bob cohen"
  *         image: "http://localhost:3000/bob.png"
- * 
+ *
  *     returnedComment:
  *       type: object
  *       required:
@@ -51,7 +51,7 @@
  *           email: "bob@gmail.com"
  *           username: "bob123"
  *           image: "http://localhost:3000/avatar.png"
- * 
+ *
  *     returnedChatMessage:
  *       type: object
  *       required:
@@ -78,7 +78,7 @@
  *         receiverId: "1"
  *         senderId: "2"
  *         dateTime: "2025-03-18T17:28:18.917Z"
- * 
+ *
  *     returnedChatUser:
  *      type: object
  *      required:
@@ -124,7 +124,7 @@
  *          lastMessage: "Hi"
  *          unreadCount: 2
  *          dateTime: "2025-03-18T17:28:18.917Z"
- * 
+ *
  *     returnedPost:
  *       type: object
  *       required:
