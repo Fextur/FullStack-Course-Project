@@ -16,6 +16,7 @@ import contentRoute from "./routes/contentRoute";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 import fs from "fs";
+const path = require("path");
 
 const app = express();
 let server: http.Server;
@@ -96,6 +97,10 @@ const options = {
 };
 const specs = swaggerJsDoc(options);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
+
+app.get("*", (_req, res) => {
+  res.sendFile(path.resolve(__dirname, "../front", "index.html"));
+});
 
 app.use(express.static("front"));
 
