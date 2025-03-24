@@ -29,7 +29,7 @@ export const createMessage = async (req: Request, res: Response) => {
     const userId = req.params.currentUserId;
 
     const newMessage = await chatDao.createMessage(userId, otherUser, message);
-    res.status(200).json(newMessage);
+    res.status(201).json(newMessage);
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ message: error.message });

@@ -139,7 +139,7 @@ export const loginUser = async (req: Request, res: Response) => {
       path: "/",
     });
 
-    res.json({
+    res.status(200).json({
       accessToken,
       user: {
         id: user._id,
@@ -167,10 +167,10 @@ export const validateToken = async (req: Request, res: Response) => {
     const user = await User.findById(decoded._id);
 
     if (!user) {
-      return res.status(401).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
-    res.json({
+    res.status(200).json({
       user: {
         id: user._id,
         username: user.username,
@@ -255,7 +255,7 @@ export const refreshToken = async (req: Request, res: Response) => {
     user.tokens[user.tokens.indexOf(refreshToken)] = newRefreshToken;
     await user.save();
 
-    res.json({ accessToken });
+    res.status(200).json({ accessToken });
   } catch (error) {
     return res
       .status(403)

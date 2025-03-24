@@ -87,7 +87,7 @@ class PostDao {
 
     await Post.deleteOne({ _id: postId });
 
-    return { message: "Post deleted successfully" };
+    return true;
   }
 
   async likePost(postId: string, userId: string) {
