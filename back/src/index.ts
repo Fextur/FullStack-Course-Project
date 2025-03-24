@@ -98,11 +98,11 @@ const options = {
 const specs = swaggerJsDoc(options);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
+app.use(express.static("front"));
+
 app.get("*", (_req, res) => {
   res.sendFile(path.resolve(__dirname, "../front", "index.html"));
 });
-
-app.use(express.static("front"));
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
